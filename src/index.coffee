@@ -4,3 +4,8 @@ $ -> # document.ready
   window.loopView = new LoopView(loops).render()
 
   $(document.body).addClass('show')
+
+  #window.addEventListener 'load', ->
+  #  setTimeout ->
+  #    window.scrollTo(0,0)
+  #  , 10

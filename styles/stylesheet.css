@@ -60,6 +60,7 @@ body:after {
 
 body {
   background-color: #424241;
+  min-height: 420px;
   opacity: 0; }
   body.show {
     opacity: 1; }
@@ -82,14 +83,16 @@ body {
       padding: 44px 60px; } }
   @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
     #titlebar .button {
-      padding: 14px 25px; } }
+      padding: 15px 25px; } }
   #titlebar #resume {
-    left: 0; }
+    left: 0;
+    opacity: 0; }
+    #titlebar #resume.show {
+      opacity: 1; }
   #titlebar #create {
     right: 0; }
 
 h1.title {
-  box-shadow: 0 -1px 10px rgba(240, 240, 240, 0.24);
   color: #cfcfcd;
   font-family: "HelveticaNeue-UltraLight", "Helvetica Neue", Helvetica, sans-serif;
   font-weight: 100;
@@ -98,10 +101,12 @@ h1.title {
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8); }
   @media only screen and (min-width: 1224px) {
     h1.title {
+      box-shadow: 0 -1px 10px rgba(240, 240, 240, 0.24);
       font-size: 64px;
       padding: 15px 0; } }
   @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
     h1.title {
+      box-shadow: 0 -1px 1px rgba(240, 240, 240, 0.54);
       font-size: 30px;
       padding: 7px 0; } }
 
@@ -123,6 +128,8 @@ h1.title {
       padding-top: 15px;
       padding-bottom: 15px;
       padding-left: 20px; } }
+  #loops li:active {
+    background-color: blue; }
 
 footer {
   position: relative; }

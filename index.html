@@ -5,7 +5,9 @@
     <title>Loops</title>
     <meta content='True' name='HandheldFriendly'>
     <meta content='320' name='MobileOptimized'>
-    <meta content='width=device-width; maximum-scale=1.0;' name='viewport'>
+    <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0;' name='viewport'>
+    <meta content='yes' name='apple-mobile-web-app-capable'>
+    <meta content='black' name='apple-mobile-web-app-status-bar-style'>
     <link href='styles/stylesheet.css' rel='stylesheet'>
     <script>
       //<![CDATA[
@@ -29,15 +31,16 @@
     </script>
     <script id='loop-new-template' type='text/x-template'>
       <li id="{{id}}" class="loop new-loop">
-        <input placeholder="Loop Name" class="new" />
+        <input placeholder="{{placeholder}}" class="new" />
       </li>
     </script>
     <script src='js/zepto.min.js'></script>
     <script src='js/underscore-min.js'></script>
-    <script src='js/backbone.js'></script>
+    <script src='js/backbone-min.js'></script>
     <script src='js/backbone-localstorage.js'></script>
     <script src='js/hogan-2.0.0.js'></script>
     <script src='js/loop.js'></script>
+    <script src='js/loopView.js'></script>
     <script src='js/index.js'></script>
   </body>
 </html>

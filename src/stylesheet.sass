@@ -6,6 +6,7 @@
 
 body
   background-color: #424241
+  min-height: 420px
   opacity: 0
 
   &.show
@@ -30,16 +31,19 @@ body
     +respond-to(desktop)
       padding: 44px 60px
     +respond-to(handheld)
-      padding: 14px 25px
+      padding: 15px 25px
 
   #resume
     left: 0
+    opacity: 0
+    &.show
+      opacity: 1
+
   #create
     right: 0
   
 
 h1.title
-  box-shadow: 0 -1px 10px rgba(240,240,240,0.24)
   color: #CFCFCD
   font-family: "HelveticaNeue-UltraLight", "Helvetica Neue", Helvetica, sans-serif
   font-weight: 100
@@ -48,13 +52,17 @@ h1.title
   text-shadow: 1px 1px 0px rgba(0,0,0,0.8)
 
   +respond-to(desktop)
+    box-shadow: 0 -1px 10px rgba(240,240,240,0.24)
     font-size: 64px
     padding: 15px 0
   +respond-to(handheld)
+    box-shadow: 0 -1px 1px rgba(240,240,240,0.54)
     font-size: 30px
     padding: 7px 0
 
 #loops
+  &:active
+
   li
     background-color: #363535
     box-shadow: inset 0 -1px 0px rgba(78, 76, 76, 0.6)
@@ -72,6 +80,9 @@ h1.title
       padding-top: 15px
       padding-bottom: 15px
       padding-left: 20px
+
+    &:active
+      background-color: blue
 
 footer
   position: relative
