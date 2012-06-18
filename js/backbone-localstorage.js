@@ -30,7 +30,7 @@ _.extend(Store.prototype, {
   // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
   // have an id of it's own.
   create: function(model) {
-    if (!model.id) model.id = model.attributes.id = guid();
+    if (!model.id) model.id = model.get('id') || guid();
     this.data[model.id] = model;
     this.save();
     return model;
@@ -38,14 +38,14 @@ _.extend(Store.prototype, {
 
   // Update a model by replacing its copy in `this.data`.
   update: function(model) {
-    this.data[model.id] = model;
+    this.data[model.get('id')] = model;
     this.save();
     return model;
   },
 
   // Retrieve a model from `this.data` by id.
   find: function(model) {
-    return this.data[model.id];
+    return this.data[model.get('id')];
   },
 
   // Return the array of all models currently in storage.
@@ -55,7 +55,7 @@ _.extend(Store.prototype, {
 
   // Delete a model from `this.data`, returning it.
   destroy: function(model) {
-    delete this.data[model.id];
+    delete this.data[model.get('id')];
     this.save();
     return model;
   }

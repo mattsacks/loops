@@ -23,17 +23,14 @@ body
   &:first-child
     border-right: 1px solid rgba(35,35,35,0.5)
 
-  +respond-to(handheld)
-    font-size: 50px
-
-    &:nth-child(n)
-      border-width: 2px
-
 #titlebar
   position: relative
 
   .button 
-    padding: 44px 60px
+    +respond-to(desktop)
+      padding: 44px 60px
+    +respond-to(handheld)
+      padding: 14px 25px
 
   #resume
     left: 0
@@ -47,14 +44,15 @@ h1.title
   font-family: "HelveticaNeue-UltraLight", "Helvetica Neue", Helvetica, sans-serif
   font-weight: 100
   display: block
-  padding: 15px 0
   text-align: center
   text-shadow: 1px 1px 0px rgba(0,0,0,0.8)
 
   +respond-to(desktop)
     font-size: 64px
+    padding: 15px 0
   +respond-to(handheld)
-    font-size: 100px
+    font-size: 30px
+    padding: 7px 0
 
 #loops
   li
@@ -63,16 +61,17 @@ h1.title
     color: #F9F9F9
     display: block
     font-family: "Open Sans Semibold"
-    padding-left: 40px
 
     +respond-to(desktop)
       font-size: 18px
       padding-top: 20px
       padding-bottom: 20px
+      padding-left: 40px
     +respond-to(handheld)
-      font-size: 40px
-      padding-top: 45px
-      padding-bottom: 45px
+      font-size: 14px
+      padding-top: 15px
+      padding-bottom: 15px
+      padding-left: 20px
 
 footer
   position: relative

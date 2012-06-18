@@ -5,7 +5,7 @@
     %title Loops
     %meta{:name => "HandheldFriendly", :content => "True"}
     %meta{:name => "MobileOptimized", :content => "320"}
-    %meta{:name => "viewport", :content => "width-device-width"}
+    %meta{:name => "viewport", :content => "width=device-width; maximum-scale=1.0;"}
 
     %link{:rel => 'stylesheet', :href => 'styles/stylesheet.css'}
     :javascript
@@ -21,18 +21,20 @@
     %script{:id => "loop-template", :type => "text/x-template"}
       :plain
         {{#loops}}
-          <li id="loop-{{id}}" class="loop">
-            {{label}}
+          <li id="{{id}}" class="loop">
+            <label>{{label}}</label>
           </li>
         {{/loops}}
-
-    %footer
-      #author
-        by Matt Sacks
+    %script{:id => "loop-new-template", :type => "text/x-template"}
+      :plain
+        <li id="{{id}}" class="loop new-loop">
+          <input placeholder="Loop Name" class="new" />
+        </li>
 
     %script{:src => 'js/zepto.min.js'}=""
     %script{:src => 'js/underscore-min.js'}=""
     %script{:src => 'js/backbone.js'}=""
     %script{:src => 'js/backbone-localstorage.js'}=""
     %script{:src => 'js/hogan-2.0.0.js'}=""
+    %script{:src => 'js/loop.js'}=""
     %script{:src => 'js/index.js'}=""
