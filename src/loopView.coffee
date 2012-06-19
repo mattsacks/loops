@@ -63,6 +63,27 @@ class LoopView extends Backbone.View
   view: (e) ->
     el = $(e.target)
     return if !el.is('li')
+    prev = e.target.previousElementSibling
+    next = e.target.nextElementSibling
+
+    if el.hasClass('active')
+      $(document.body).removeClass('viewing')
+      el.siblings().css '-webkit-transform', 'translate3d(0,0,0)'
+      el.removeClass('active').css '-webkit-transform',
+        'translate3d(0,-' + el.offset().top + 'px,0)'
+    else
+      $(document.body).addClass('viewing')
+      while prev? # move previous siblings over the top by index
+        $prev = $(prev)
+        top = $prev.offset().top + $prev.height()
+        $prev.css '-webkit-transform', 'translate3d(0,-' + top + 'px,0)'
+        prev = prev.previousElementSibling
+      while next? # move siblings past the bottom
+        $(next).css '-webkit-transform', "translate3d(0,#{window.innerHeight}px,0)"
+        next = next.nextElementSibling
+
+      el.addClass('active').css '-webkit-transform',
+      'translate3d(0,-' + el.offset().top + 'px,0)'
 
   edit: (e) ->
     el = $(e.target).parent()
@@ -71,7 +92,7 @@ class LoopView extends Backbone.View
 
   delete: (e) ->
     el = $(e.target)
-    # if el.find('label').html() is ''
+    return if el.hasClass('active')
     el.remove()
     @collection.remove(el.attr('id'))
     @save()
@@ -84,7 +105,13 @@ class LoopView extends Backbone.View
     templateData = _.extend {}, @helpers, loops: data
     html = template.render(templateData)
     @element.html(html)
+    @postRender()
     return this
 
-  helpers:
+  postRender: ->
+    @els.loops = @element.find('.loop')
+
+  defineHelpers: ->
+    thiz = this
+
     placeholder: -> @label or 'Loop Name'

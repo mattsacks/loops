@@ -59,11 +59,18 @@ body:after {
   src: local("Open Sans Semibold"), local("OpenSans-Semibold"), url("../fonts/OpenSans-Semibold.ttf") format("truetype"); }
 
 body {
+  -webkit-transition: background-color 0.3s ease-out;
+  -moz-transition: background-color 0.3s ease-out;
+  -ms-transition: background-color 0.3s ease-out;
+  -o-transition: background-color 0.3s ease-out;
+  transition: background-color 0.3s ease-out;
   background-color: #424241;
   min-height: 420px;
   opacity: 0; }
   body.show {
     opacity: 1; }
+  body.viewing {
+    background-color: #363535; }
 
 .button {
   color: #c6c2c2;
@@ -81,7 +88,7 @@ body {
   @media only screen and (min-width: 1224px) {
     #titlebar .button {
       font-size: 50px;
-      padding: 30px 50px; } }
+      padding: 15px 50px; } }
   @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
     #titlebar .button {
       font-size: 30px;
@@ -105,7 +112,7 @@ h1.title {
     h1.title {
       box-shadow: 0 -1px 10px rgba(240, 240, 240, 0.24);
       font-size: 64px;
-      padding: 15px 0; } }
+      padding: 5px 0; } }
   @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
     h1.title {
       box-shadow: 0 -1px 1px rgba(240, 240, 240, 0.54);
@@ -113,6 +120,7 @@ h1.title {
       padding: 7px 0; } }
 
 #loops li {
+  -webkit-transition: -webkit-transform 0.3s ease-out;
   background-color: #363535;
   box-shadow: inset 0 -1px 0px rgba(78, 76, 76, 0.6);
   color: #f9f9f9;
@@ -121,8 +129,8 @@ h1.title {
   @media only screen and (min-width: 1224px) {
     #loops li {
       font-size: 18px;
-      padding-top: 20px;
-      padding-bottom: 20px;
+      padding-top: 33px;
+      padding-bottom: 33px;
       padding-left: 40px; } }
   @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
     #loops li {
@@ -130,8 +138,6 @@ h1.title {
       padding-top: 15px;
       padding-bottom: 15px;
       padding-left: 20px; } }
-  #loops li:active {
-    background-color: blue; }
 
 footer {
   position: relative; }

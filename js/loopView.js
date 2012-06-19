@@ -95,10 +95,30 @@ LoopView = (function(_super) {
   };
 
   LoopView.prototype.view = function(e) {
-    var el;
+    var $prev, el, next, prev, top;
     el = $(e.target);
     if (!el.is('li')) {
-
+      return;
+    }
+    prev = e.target.previousElementSibling;
+    next = e.target.nextElementSibling;
+    if (el.hasClass('active')) {
+      $(document.body).removeClass('viewing');
+      el.siblings().css('-webkit-transform', 'translate3d(0,0,0)');
+      return el.removeClass('active').css('-webkit-transform', 'translate3d(0,-' + el.offset().top + 'px,0)');
+    } else {
+      $(document.body).addClass('viewing');
+      while (prev != null) {
+        $prev = $(prev);
+        top = $prev.offset().top + $prev.height();
+        $prev.css('-webkit-transform', 'translate3d(0,-' + top + 'px,0)');
+        prev = prev.previousElementSibling;
+      }
+      while (next != null) {
+        $(next).css('-webkit-transform', "translate3d(0," + window.innerHeight + "px,0)");
+        next = next.nextElementSibling;
+      }
+      return el.addClass('active').css('-webkit-transform', 'translate3d(0,-' + el.offset().top + 'px,0)');
     }
   };
 
@@ -112,6 +132,9 @@ LoopView = (function(_super) {
   LoopView.prototype["delete"] = function(e) {
     var el;
     el = $(e.target);
+    if (el.hasClass('active')) {
+      return;
+    }
     el.remove();
     this.collection.remove(el.attr('id'));
     return this.save();
@@ -130,6 +153,7 @@ LoopView = (function(_super) {
     });
     html = template.render(templateData);
     this.element.html(html);
+    this.postRender();
     return this;
   };
 
