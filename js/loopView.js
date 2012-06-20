@@ -46,7 +46,8 @@ LoopView = (function(_super) {
   LoopView.prototype.gather = function() {
     this.element = this.$el;
     this.els = {
-      "new": $('#create')
+      "new": $('#create'),
+      portability: $('#data-buttons')
     };
     return this.templates = {
       loops: Hogan.compile($("#" + this.options.templateId).html()),
@@ -63,7 +64,7 @@ LoopView = (function(_super) {
       }
       return _this.save.call(_this, e.target);
     });
-    this.els["new"].on('click', function() {
+    this.els["new"].on(this.clickEvent, function() {
       return _this.collection.add([new Loop({})]);
     });
     this.collection.on('add', function(model) {
@@ -106,7 +107,7 @@ LoopView = (function(_super) {
       model = this.collection.get($parent.attr('id'));
     }
     if (el.value === '' && model.get('label') === void 0) {
-      return this["delete"](model);
+      return this.collection.remove(model);
     } else if (el.value === '') {
       value = model.get('label');
     } else {
@@ -120,20 +121,21 @@ LoopView = (function(_super) {
   LoopView.prototype.view = function(e) {
     var $prev, el, newLoop, next, prev, top;
     newLoop = this.element.find('.new-loop');
+    el = $(e.target);
+    if (!el.is('li')) {
+      return;
+    }
     this.deleting = true;
     if (newLoop.length > 0) {
       this["delete"](this.collection.get(newLoop.attr('id')));
     }
     this.deleting = false;
-    el = $(e.target);
-    if (!el.is('li')) {
-      return;
-    }
     prev = e.target.previousElementSibling;
     next = e.target.nextElementSibling;
     if (el.hasClass('active')) {
       $(document.body).removeClass('viewing');
       el.siblings().css('-webkit-transform', 'translate3d(0,0,0)');
+      this.els.portability.css('-webkit-transform', 'translate3d(0,0,0)');
       return el.removeClass('active').css('-webkit-transform', 'translate3d(0,-' + el.offset().top + 'px,0)');
     } else {
       $(document.body).addClass('viewing');
@@ -147,6 +149,7 @@ LoopView = (function(_super) {
         $(next).css('-webkit-transform', "translate3d(0," + window.innerHeight + "px,0)");
         next = next.nextElementSibling;
       }
+      this.els.portability.css('-webkit-transform', "translate3d(0," + window.innerHeight + "px,0)");
       return el.addClass('active').css('-webkit-transform', 'translate3d(0,-' + el.offset().top + 'px,0)');
     }
   };
@@ -189,7 +192,12 @@ LoopView = (function(_super) {
   };
 
   LoopView.prototype.postRender = function() {
-    return this.els.loops = this.element.find('.loop');
+    this.els.loops = this.element.find('.loop');
+    if (this.collection.models.length > 0) {
+      return this.els.portability.addClass('show');
+    } else {
+      return this.els.portability.removeClass('show');
+    }
   };
 
   LoopView.prototype.defineHelpers = function() {

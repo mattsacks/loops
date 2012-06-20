@@ -25,6 +25,7 @@ class LoopView extends Backbone.View
     @element = this.$el
     @els =
       new: $('#create')
+      portability: $('#data-buttons')
     @templates =
       loops: Hogan.compile($("##{@options.templateId}").html())
       new:   Hogan.compile($("##{@options.newLoopTemplateId}").html())
@@ -38,7 +39,7 @@ class LoopView extends Backbone.View
       @save.call(this, e.target)
 
     # the plus button
-    @els.new.on 'click', => @collection.add([new Loop({})])
+    @els.new.on @clickEvent, => @collection.add([new Loop({})])
 
     @collection.on 'add', (model) => @new(model)
     @collection.on 'reset', => @render()
@@ -57,14 +58,14 @@ class LoopView extends Backbone.View
     data = _.extend {}, @helpers, model.toJSON()
     if replace then replace.outerHTML = @templates.new.render(data)
     else @element.prepend(@templates.new.render(data))
-    @$('.new').focus()
+    @$('.new').focus() # trigger's view on new element
 
   save: (el, model) ->
     $parent = $(el).parent()
     if !model? then model = @collection.get($parent.attr('id'))
 
     if el.value is '' and model.get('label') is undefined
-      return @delete(model)
+      return @collection.remove(model) # fires @delete
     else if el.value is ''
       value = model.get('label')
     else value = el.value
@@ -75,18 +76,19 @@ class LoopView extends Backbone.View
 
   view: (e) ->
     newLoop = @element.find('.new-loop')
+    el = $(e.target)
+    return if !el.is('li')
     @deleting = true
     @delete(@collection.get(newLoop.attr('id'))) if newLoop.length > 0
     @deleting = false
 
-    el = $(e.target)
-    return if !el.is('li')
     prev = e.target.previousElementSibling
     next = e.target.nextElementSibling
 
     if el.hasClass('active')
       $(document.body).removeClass('viewing')
       el.siblings().css '-webkit-transform', 'translate3d(0,0,0)'
+      @els.portability.css '-webkit-transform', 'translate3d(0,0,0)'
       el.removeClass('active').css '-webkit-transform',
         'translate3d(0,-' + el.offset().top + 'px,0)'
     else
@@ -100,8 +102,10 @@ class LoopView extends Backbone.View
         $(next).css '-webkit-transform', "translate3d(0,#{window.innerHeight}px,0)"
         next = next.nextElementSibling
 
+      @els.portability.css '-webkit-transform', "translate3d(0,#{window.innerHeight}px,0)"
+
       el.addClass('active').css '-webkit-transform',
-      'translate3d(0,-' + el.offset().top + 'px,0)'
+        'translate3d(0,-' + el.offset().top + 'px,0)'
 
   edit: (e) ->
     el = $(e.target).parent()
@@ -127,6 +131,9 @@ class LoopView extends Backbone.View
 
   postRender: ->
     @els.loops = @element.find('.loop')
+
+    if @collection.models.length > 0 then @els.portability.addClass('show')
+    else @els.portability.removeClass('show')
 
   defineHelpers: ->
     thiz = this
