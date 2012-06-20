@@ -14,7 +14,7 @@ LoopView = (function(_super) {
     }
     attrs = _.extend({}, this.defaults, options);
     if (!(attrs.collection != null)) {
-      return 'ERROR: No Collection Found';
+      throw new Error('No collection given');
     }
     this.preProcess();
     LoopView.__super__.constructor.call(this, attrs);
@@ -58,6 +58,9 @@ LoopView = (function(_super) {
     var _this = this;
     _.bindAll(this, 'edit', 'view', 'delete');
     this.element.on('blur', 'input.new', function(e) {
+      if (_this.deleting === true) {
+        return;
+      }
       return _this.save.call(_this, e.target);
     });
     this.els["new"].on('click', function() {
@@ -66,16 +69,18 @@ LoopView = (function(_super) {
     this.collection.on('add', function(model) {
       return _this["new"](model);
     });
-    return this.collection.on('reset', function() {
+    this.collection.on('reset', function() {
       return _this.render();
+    });
+    return this.collection.on('remove', function(model) {
+      return _this["delete"](model);
     });
   };
 
   LoopView.prototype.el = '#loops';
 
   LoopView.prototype.events = {
-    'click label': 'edit',
-    'swipeLeft .loop': 'delete'
+    'click label': 'edit'
   };
 
   LoopView.prototype.defaults = {
@@ -101,9 +106,7 @@ LoopView = (function(_super) {
       model = this.collection.get($parent.attr('id'));
     }
     if (el.value === '' && model.get('label') === void 0) {
-      return this["delete"]({
-        target: $parent[0]
-      });
+      return this["delete"](model);
     } else if (el.value === '') {
       value = model.get('label');
     } else {
@@ -115,7 +118,13 @@ LoopView = (function(_super) {
   };
 
   LoopView.prototype.view = function(e) {
-    var $prev, el, next, prev, top;
+    var $prev, el, newLoop, next, prev, top;
+    newLoop = this.element.find('.new-loop');
+    this.deleting = true;
+    if (newLoop.length > 0) {
+      this["delete"](this.collection.get(newLoop.attr('id')));
+    }
+    this.deleting = false;
     el = $(e.target);
     if (!el.is('li')) {
       return;
@@ -145,18 +154,20 @@ LoopView = (function(_super) {
   LoopView.prototype.edit = function(e) {
     var el, model;
     el = $(e.target).parent();
+    if (el.hasClass('active')) {
+      return;
+    }
     model = this.collection.get(el.attr('id'));
     return this["new"](model, el[0]);
   };
 
-  LoopView.prototype["delete"] = function(e) {
+  LoopView.prototype["delete"] = function(model) {
     var el;
-    el = $(e.target);
+    el = $("#" + model.id);
     if (el.hasClass('active')) {
       return;
     }
-    el.remove();
-    return this.collection.remove(el.attr('id'));
+    return el.remove();
   };
 
   LoopView.prototype.render = function(template, data) {

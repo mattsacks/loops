@@ -1,7 +1,7 @@
 class LoopView extends Backbone.View
   constructor: (options = {}) ->
     attrs = _.extend {}, @defaults, options
-    return 'ERROR: No Collection Found' if !attrs.collection?
+    if !attrs.collection? then throw new Error('No collection given')
 
     @preProcess()
     super(attrs)
@@ -33,19 +33,21 @@ class LoopView extends Backbone.View
     _.bindAll this, 'edit', 'view', 'delete'
 
     # done with creating a loop
-    @element.on 'blur', 'input.new', (e) => @save.call(this, e.target)
+    @element.on 'blur', 'input.new', (e) =>
+      return if @deleting is true
+      @save.call(this, e.target)
 
     # the plus button
     @els.new.on 'click', => @collection.add([new Loop({})])
 
     @collection.on 'add', (model) => @new(model)
     @collection.on 'reset', => @render()
+    @collection.on 'remove', (model) => @delete(model)
 
   el: '#loops'
 
   events:
     'click label': 'edit'
-    'swipeLeft .loop': 'delete'
 
   defaults:
     templateId: 'loop-template'
@@ -62,7 +64,7 @@ class LoopView extends Backbone.View
     if !model? then model = @collection.get($parent.attr('id'))
 
     if el.value is '' and model.get('label') is undefined
-      return @delete(target: $parent[0])
+      return @delete(model)
     else if el.value is ''
       value = model.get('label')
     else value = el.value
@@ -72,6 +74,11 @@ class LoopView extends Backbone.View
     @render()
 
   view: (e) ->
+    newLoop = @element.find('.new-loop')
+    @deleting = true
+    @delete(@collection.get(newLoop.attr('id'))) if newLoop.length > 0
+    @deleting = false
+
     el = $(e.target)
     return if !el.is('li')
     prev = e.target.previousElementSibling
@@ -98,14 +105,14 @@ class LoopView extends Backbone.View
 
   edit: (e) ->
     el = $(e.target).parent()
+    return if el.hasClass('active')
     model = @collection.get(el.attr('id'))
     @new(model, el[0])
 
-  delete: (e) ->
-    el = $(e.target)
+  delete: (model) ->
+    el = $("##{model.id}")
     return if el.hasClass('active')
     el.remove()
-    @collection.remove(el.attr('id'))
 
   render: (template = @templates.loops, data) ->
     data = data or _.sortBy @collection.toJSON(), (i) ->
