@@ -7,17 +7,41 @@ LoopView = (function(_super) {
 
   __extends(LoopView, _super);
 
-  function LoopView(collection, options) {
+  function LoopView(options) {
+    var attrs;
     if (options == null) {
       options = {};
     }
-    _.extend(options, this.defaults);
-    LoopView.__super__.constructor.call(this, options);
-    this.collection = collection;
-    this.template = Hogan.compile($("#" + options.templateId).html());
+    attrs = _.extend({}, this.defaults, options);
+    if (!(attrs.collection != null)) {
+      return 'ERROR: No Collection Found';
+    }
+    this.preProcess();
+    LoopView.__super__.constructor.call(this, attrs);
+    this.collection = this.options.collection;
     this.gather();
     this.attach();
+    this.helpers = this.defineHelpers();
   }
+
+  LoopView.prototype.preProcess = function() {
+    var addClicks,
+      _this = this;
+    return addClicks = (function() {
+      var method, selector, _ref, _results;
+      _this.clickEvent = window.mobile === true ? "tap" : "click";
+      _this.clickEvents = {
+        '.loop': 'view'
+      };
+      _ref = _this.clickEvents;
+      _results = [];
+      for (selector in _ref) {
+        method = _ref[selector];
+        _results.push(_this.events["" + _this.clickEvent + " " + selector] = method);
+      }
+      return _results;
+    })();
+  };
 
   LoopView.prototype.gather = function() {
     this.element = this.$el;
@@ -25,7 +49,8 @@ LoopView = (function(_super) {
       "new": $('#create')
     };
     return this.templates = {
-      "new": $('#loop-new-template').html()
+      loops: Hogan.compile($("#" + this.options.templateId).html()),
+      "new": Hogan.compile($("#" + this.options.newLoopTemplateId).html())
     };
   };
 
@@ -41,12 +66,6 @@ LoopView = (function(_super) {
     this.collection.on('add', function(model) {
       return _this["new"](model);
     });
-    this.collection.on('update', function() {
-      return _this.render();
-    });
-    this.collection.on('remove', function() {
-      return _this.render();
-    });
     return this.collection.on('reset', function() {
       return _this.render();
     });
@@ -55,34 +74,36 @@ LoopView = (function(_super) {
   LoopView.prototype.el = '#loops';
 
   LoopView.prototype.events = {
-    'click .loop': 'view',
     'click label': 'edit',
     'swipeLeft .loop': 'delete'
   };
 
   LoopView.prototype.defaults = {
-    templateId: 'loop-template'
+    templateId: 'loop-template',
+    newLoopTemplateId: 'loop-new-template'
   };
 
   LoopView.prototype["new"] = function(model, replace) {
-    var data, template;
-    template = Hogan.compile(this.templates["new"]);
+    var data;
     data = _.extend({}, this.helpers, model.toJSON());
     if (replace) {
-      replace.outerHTML = template.render(data);
+      replace.outerHTML = this.templates["new"].render(data);
     } else {
-      this.element.prepend(template.render(data));
+      this.element.prepend(this.templates["new"].render(data));
     }
     return this.$('.new').focus();
   };
 
   LoopView.prototype.save = function(el, model) {
-    var value;
+    var $parent, value;
+    $parent = $(el).parent();
     if (!(model != null)) {
-      model = this.collection.get($(el).parent().attr('id'));
+      model = this.collection.get($parent.attr('id'));
     }
     if (el.value === '' && model.get('label') === void 0) {
-      return this.collection.remove(model);
+      return this["delete"]({
+        target: $parent[0]
+      });
     } else if (el.value === '') {
       value = model.get('label');
     } else {
@@ -90,8 +111,7 @@ LoopView = (function(_super) {
     }
     model.set('label', value);
     this.collection.sync('update', model);
-    this.collection.save();
-    return this.collection.trigger('update');
+    return this.render();
   };
 
   LoopView.prototype.view = function(e) {
@@ -136,14 +156,13 @@ LoopView = (function(_super) {
       return;
     }
     el.remove();
-    this.collection.remove(el.attr('id'));
-    return this.save();
+    return this.collection.remove(el.attr('id'));
   };
 
   LoopView.prototype.render = function(template, data) {
     var html, templateData;
     if (template == null) {
-      template = this.template;
+      template = this.templates.loops;
     }
     data = data || _.sortBy(this.collection.toJSON(), function(i) {
       return -1 * this.get(i.id).cid.slice(1);
@@ -151,16 +170,25 @@ LoopView = (function(_super) {
     templateData = _.extend({}, this.helpers, {
       loops: data
     });
+    this.latestTemplateData = templateData;
     html = template.render(templateData);
     this.element.html(html);
     this.postRender();
     return this;
   };
 
-  LoopView.prototype.helpers = {
-    placeholder: function() {
-      return this.label || 'Loop Name';
-    }
+  LoopView.prototype.postRender = function() {
+    return this.els.loops = this.element.find('.loop');
+  };
+
+  LoopView.prototype.defineHelpers = function() {
+    var thiz;
+    thiz = this;
+    return {
+      placeholder: function() {
+        return this.label || 'Loop Name';
+      }
+    };
   };
 
   return LoopView;
