@@ -8,6 +8,8 @@
     <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0;' name='viewport'>
     <meta content='yes' name='apple-mobile-web-app-capable'>
     <meta content='black' name='apple-mobile-web-app-status-bar-style'>
+    <link href='icon-hi2/icon-hi3@2x.png' rel='apple-touch-icon-precomposed' sizes='114x114'>
+    <link href='favicon-hi.ico' rel='shortcut icon' type='images/x-icon'>
     <link href='styles/stylesheet.css' rel='stylesheet'>
     <script>
       //<![CDATA[
@@ -16,27 +18,42 @@
     </script>
   </head>
   <body>
-    <div id='titlebar'>
-      <div class='button' id='resume'>r</div>
-      <h1 class='title column'>loops</h1>
-      <div class='button' id='create'>+</div>
-    </div>
-    <ul id='loops'></ul>
-    <script id='loop-template' type='text/x-template'>
-      {{#loops}}
-        <li id="{{id}}" class="loop">
-          <label>{{label}}</label>
+    <div class='container'>
+      <div id='titlebar'>
+        <div class='button' id='resume'>r</div>
+        <h1 class='title column'>loops</h1>
+        <div class='button' id='create'>+</div>
+      </div>
+      <ul id='loops'></ul>
+      <script id='loop-template' type='text/x-template'>
+        {{#loops}}
+          <li id="{{id}}" class="loop">
+            <label>{{label}}</label>
+          </li>
+        {{/loops}}
+      </script>
+      <script id='loop-new-template' type='text/x-template'>
+        <li id="{{id}}" class="loop new-loop">
+          <input placeholder="{{placeholder}}" class="new" />
         </li>
-      {{/loops}}
-    </script>
-    <script id='loop-new-template' type='text/x-template'>
-      <li id="{{id}}" class="loop new-loop">
-        <input placeholder="{{placeholder}}" class="new" />
-      </li>
-    </script>
-    <div id='data-buttons'>
-      <div class='button' id='import'>Import</div>
-      <div class='button' id='export'>Export</div>
+      </script>
+      <div class='button' id='delete'>Delete Loop</div>
+      <script id='loop-detail-template' type='text/x-temmplate'>
+        <div id="loop-buttons">
+          <div id="subtract" class="button">
+            -
+          </div>
+          <div id="amount">
+            {{amount}}
+          </div>
+          <div id="add" class="button">
+          </div>
+        </div>
+      </script>
+      <div id='data-buttons'>
+        <div class='button' id='import'>Import</div>
+        <div class='button' id='export'>Export</div>
+      </div>
     </div>
     <script src='js/zepto.min.js'></script>
     <script src='js/underscore-min.js'></script>
@@ -44,6 +61,7 @@
     <script src='js/backbone-localstorage.js'></script>
     <script src='js/hogan-2.0.0.js'></script>
     <script src='js/loop.js'></script>
+    <script src='js/loopsView.js'></script>
     <script src='js/loopView.js'></script>
     <script src='js/index.js'></script>
   </body>

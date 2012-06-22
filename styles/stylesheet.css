@@ -74,6 +74,33 @@ body {
     opacity: 1; }
   body.viewing {
     background-color: #363535; }
+    body.viewing .container {
+      padding-bottom: 0; }
+      @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+        body.viewing .container {
+          height: 460px !important;
+          max-height: 460px !important; } }
+    body.viewing #delete {
+      -webkit-transition-delay: 0.1s;
+      -moz-transition-delay: 0.1s;
+      -ms-transition-delay: 0.1s;
+      -o-transition-delay: 0.1s;
+      transition-delay: 0.1s;
+      -webkit-transform: translate3d(0, 0, 0);
+      z-index: 3; }
+
+.container {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding-bottom: 20px; }
+  @media only screen and (min-width: 1224px) {
+    .container {
+      min-height: 800px; } }
+  @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    .container {
+      height: 460px;
+      max-height: 460px; } }
 
 .button {
   -webkit-user-select: none;
@@ -148,6 +175,35 @@ h1.title {
         padding-top: 15px;
         padding-bottom: 15px;
         padding-left: 20px; } }
+
+#delete {
+  -webkit-transition: -webkit-transform 0.2s ease-out;
+  -moz-transition: -webkit-transform 0.2s ease-out;
+  -ms-transition: -webkit-transform 0.2s ease-out;
+  -o-transition: -webkit-transform 0.2s ease-out;
+  transition: -webkit-transform 0.2s ease-out;
+  background-color: #855758;
+  box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.4);
+  color: #fafafa;
+  font-family: "LatoBlack";
+  right: 0;
+  text-align: center;
+  text-transform: uppercase;
+  top: 0px; }
+  @media only screen and (min-width: 1224px) {
+    #delete {
+      -webkit-transform: translate3d(250px, 0, 0);
+      font-size: 23px;
+      padding: 16px 0;
+      width: 120px; } }
+  @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+    #delete {
+      -webkit-transform: translate3d(100px, 0, 0);
+      font-size: 11px;
+      padding: 11px 0;
+      width: 60px; } }
+  #delete:active {
+    background-color: blue; }
 
 #data-buttons {
   -webkit-transition: -webkit-transform 0.3s ease-out;

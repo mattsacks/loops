@@ -27,8 +27,8 @@ $ -> # document.ready
     else false
 
 
-  window.loops    = new Loops()
-  window.loopView = new LoopView
+  window.loops     = new Loops()
+  window.loopsView = new LoopsView
     collection: loops
   .render()
 

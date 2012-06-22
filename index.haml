@@ -10,34 +10,52 @@
     %meta{:name => "apple-mobile-web-app-capable", :content => "yes"}
     %meta{:name => "apple-mobile-web-app-status-bar-style", :content =>"black"}
 
+    %link{:rel => "apple-touch-icon-precomposed", :sizes => "114x114", :href => "icon-hi2/icon-hi3@2x.png"}
+    %link{:rel => 'shortcut icon', :href => 'favicon-hi.ico', :type => 'images/x-icon'}
     %link{:rel => 'stylesheet', :href => 'styles/stylesheet.css'}
     -# livereload
     :javascript
       document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
 
   %body
-    #titlebar
-      #resume.button r
-      %h1.title.column loops
-      #create.button +
-        
-    %ul#loops
-    %script{:id => "loop-template", :type => "text/x-template"}
-      :plain
-        {{#loops}}
-          <li id="{{id}}" class="loop">
-            <label>{{label}}</label>
+    .container
+      #titlebar
+        #resume.button r
+        %h1.title.column loops
+        #create.button +
+          
+      %ul#loops
+      %script{:id => "loop-template", :type => "text/x-template"}
+        :plain
+          {{#loops}}
+            <li id="{{id}}" class="loop">
+              <label>{{label}}</label>
+            </li>
+          {{/loops}}
+      %script{:id => "loop-new-template", :type => "text/x-template"}
+        :plain
+          <li id="{{id}}" class="loop new-loop">
+            <input placeholder="{{placeholder}}" class="new" />
           </li>
-        {{/loops}}
-    %script{:id => "loop-new-template", :type => "text/x-template"}
-      :plain
-        <li id="{{id}}" class="loop new-loop">
-          <input placeholder="{{placeholder}}" class="new" />
-        </li>
 
-    #data-buttons
-      #import.button Import
-      #export.button Export
+      #delete.button Delete Loop
+
+      %script{:id => "loop-detail-template", :type => "text/x-temmplate"}
+        :plain
+          <div id="loop-buttons">
+            <div id="subtract" class="button">
+              -
+            </div>
+            <div id="amount">
+              {{amount}}
+            </div>
+            <div id="add" class="button">
+            </div>
+          </div>
+
+      #data-buttons
+        #import.button Import
+        #export.button Export
 
     %script{:src => 'js/zepto.min.js'}=""
     %script{:src => 'js/underscore-min.js'}=""
@@ -46,5 +64,6 @@
     %script{:src => 'js/hogan-2.0.0.js'}=""
 
     %script{:src => 'js/loop.js'}=""
+    %script{:src => 'js/loopsView.js'}=""
     %script{:src => 'js/loopView.js'}=""
     %script{:src => 'js/index.js'}=""
