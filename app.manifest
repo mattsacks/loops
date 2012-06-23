@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 1340457397
+# 1340492922
 
 index.html
 styles/stylesheet.css
@@ -11,6 +11,7 @@ js/hogan-2.0.0.js
 js/loop.js
 js/loopView.js
 js/loopsView.js
+js/session.js
 js/index.js
 fonts/Lato-Regular.ttf
 fonts/Lato-Black.ttf

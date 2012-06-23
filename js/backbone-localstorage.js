@@ -29,16 +29,17 @@ _.extend(Store.prototype, {
 
   // Add a model, giving it a (hopefully)-unique GUID, if it doesn't already
   // have an id of it's own.
-  create: function(model) {
-    if (!model.id) model.id = model.get('id') || guid();
-    this.data[model.id] = model;
+  create: function(model, options) {
+    var id = options && options.id ? options.id :
+      model.id ? model.id : (model.get && model.get('id')) || model.cid || guid();
+    this.data[id] = model;
     this.save();
     return model;
   },
 
   // Update a model by replacing its copy in `this.data`.
-  update: function(model) {
-    this.data[model.get('id')] = model;
+  update: function(model, options) {
+    this.data[(options && options.id) || model.get('id')] = model;
     this.save();
     return model;
   },
@@ -54,8 +55,9 @@ _.extend(Store.prototype, {
   },
 
   // Delete a model from `this.data`, returning it.
-  destroy: function(model) {
-    delete this.data[model.get('id')];
+  destroy: function(model, options) {
+    var id = (options && options.id) || model.get('id');
+    delete this.data[id];
     this.save();
     return model;
   }
@@ -67,18 +69,18 @@ _.extend(Store.prototype, {
 Backbone.sync.store = function(method, model, options) {
 
   var resp;
-  var store = model.localStorage || model.collection.localStorage;
+  var store = this.localStorage || model.localStorage || model.collection.localStorage;
 
   switch (method) {
     case "read":    resp = model.id ? store.find(model) : store.findAll(); break;
-    case "create":  resp = store.create(model);                            break;
-    case "update":  resp = store.update(model);                            break;
-    case "delete":  resp = store.destroy(model);                           break;
+    case "create":  resp = store.create(model, options);                   break;
+    case "update":  resp = store.update(model, options);                   break;
+    case "delete":  resp = store.destroy(model, options);                  break;
   }
 
   if (resp) {
-    options && options.success(resp);
+    options && options.success && options.success(resp);
   } else {
-    options && options.error("Record not found");
+    options && options.error && options.error("Record not found");
   }
 };

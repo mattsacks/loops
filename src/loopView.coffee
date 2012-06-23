@@ -13,6 +13,9 @@ class LoopView extends Backbone.View
     @template = Hogan.compile($("##{@options.templateId}").html())
     @element  = this.$el
 
-  render: (template = @template, model = @latestModelData) ->
-    model = @latestModelData
+  render: (template = @template, @model) ->
     @element.html(template.render(model))
+    @trigger('render', this, model)
+
+  restore: (@model) ->
+    @trigger('restore', @model)

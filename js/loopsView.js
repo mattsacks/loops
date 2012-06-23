@@ -76,9 +76,10 @@ LoopsView = (function(_super) {
     this.collection.on('reset', function() {
       return _this.render();
     });
-    return this.collection.on('remove', function(model) {
+    this.collection.on('remove', function(model) {
       return _this["delete"](model);
     });
+    return this.subView.on('restore', _.bind(this.restore, this));
   };
 
   LoopsView.prototype.el = '#loops';
@@ -109,7 +110,6 @@ LoopsView = (function(_super) {
     if (!(model != null)) {
       model = this.collection.get($parent.attr('id'));
     }
-    console.log($parent, $parent.attr('id'));
     if (el.value === '' && model.get('label') === void 0) {
       return this.collection.remove(model);
     } else if (el.value === '') {
@@ -135,13 +135,21 @@ LoopsView = (function(_super) {
       el = $("#" + e.target.id);
       e.target = el[0];
     }
+    if (scrollY !== 0) {
+      if (window.mobile === true) {
+        window.scrollTo(0, 0);
+      } else {
+        $.scroll(0);
+      }
+    }
     if (this.slideList(e.target) === true) {
       this.subView.render(null, this.collection.get(e.target.id));
       return _.delay((function() {
         return $(document.body).addClass('viewing');
       }), 1);
     } else {
-      return $(document.body).removeClass('viewing');
+      $(document.body).removeClass('viewing');
+      return this.trigger('render', this);
     }
   };
 
@@ -222,6 +230,15 @@ LoopsView = (function(_super) {
       return this.els.container.css({
         height: height + 130,
         'max-height': height + 130
+      });
+    }
+  };
+
+  LoopsView.prototype.restore = function(model) {
+    this.render();
+    if (model) {
+      return this.view({
+        target: $("#" + model.id)[0]
       });
     }
   };

@@ -36,6 +36,7 @@ $(function() {
   window.loopsView = new LoopsView({
     collection: loops,
     subView: loopView
-  }).render();
+  });
+  window.session = new Session('loopsView', 'loopView');
   return $(document.body).addClass('show');
 });

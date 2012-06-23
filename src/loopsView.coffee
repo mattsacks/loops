@@ -49,6 +49,8 @@ class LoopsView extends Backbone.View
     @collection.on 'reset', => @render()
     @collection.on 'remove', (model) => @delete(model)
 
+    @subView.on 'restore', _.bind(@restore, this)
+
   el: '#loops'
 
   events:
@@ -68,7 +70,6 @@ class LoopsView extends Backbone.View
   save: (el, model) ->
     $parent = $(el).parent()
     if !model? then model = @collection.get($parent.attr('id'))
-    console.log($parent, $parent.attr('id'))
 
     if el.value is '' and model.get('label') is undefined
       return @collection.remove(model) # fires @delete
@@ -93,12 +94,18 @@ class LoopsView extends Backbone.View
       el = $("##{e.target.id}")
       e.target = el[0]
 
+    # scroll to top
+    if scrollY isnt 0
+      if window.mobile is true then window.scrollTo(0,0)
+      else $.scroll(0)
+
     if @slideList(e.target) is true # viewing an element
       @subView.render(null, @collection.get(e.target.id))
       # lol, let transitions and shit fire
       _.delay (-> $(document.body).addClass('viewing')), 1
     else #closing a view
       $(document.body).removeClass('viewing')
+      @trigger('render', this)
 
   # open or close the loop list
   slideList: (element) ->
@@ -165,6 +172,10 @@ class LoopsView extends Backbone.View
       @els.container.css
         height:       height + 130 # buffer for bottom buttons
         'max-height': height + 130
+
+  restore: (model) ->
+    @render()
+    if model then @view(target: $("##{model.id}")[0])
 
   defineHelpers: ->
     thiz = this

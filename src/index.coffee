@@ -31,8 +31,8 @@ $ -> # document.ready
   window.loopsView = new LoopsView
     collection: loops
     subView:    loopView
-  .render()
 
+  window.session  = new Session('loopsView', 'loopView')
 
   $(document.body).addClass('show')
 

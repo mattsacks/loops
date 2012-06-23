@@ -32,11 +32,14 @@ LoopView = (function(_super) {
     if (template == null) {
       template = this.template;
     }
-    if (model == null) {
-      model = this.latestModelData;
-    }
-    model = this.latestModelData;
-    return this.element.html(template.render(model));
+    this.model = model;
+    this.element.html(template.render(model));
+    return this.trigger('render', this, model);
+  };
+
+  LoopView.prototype.restore = function(model) {
+    this.model = model;
+    return this.trigger('restore', this.model);
   };
 
   return LoopView;
