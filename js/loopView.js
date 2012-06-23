@@ -8,11 +8,36 @@ LoopView = (function(_super) {
   __extends(LoopView, _super);
 
   function LoopView(options) {
+    var modoptions;
     if (options == null) {
       options = {};
     }
-    LoopView.__super__.constructor.call(this, options);
+    modoptions = _.extend({}, this.defaults, options);
+    LoopView.__super__.constructor.call(this, modoptions);
+    this.gather();
   }
+
+  LoopView.prototype.defaults = {
+    templateId: 'loop-detail-template'
+  };
+
+  LoopView.prototype.el = '#loop';
+
+  LoopView.prototype.gather = function() {
+    this.template = Hogan.compile($("#" + this.options.templateId).html());
+    return this.element = this.$el;
+  };
+
+  LoopView.prototype.render = function(template, model) {
+    if (template == null) {
+      template = this.template;
+    }
+    if (model == null) {
+      model = this.latestModelData;
+    }
+    model = this.latestModelData;
+    return this.element.html(template.render(model));
+  };
 
   return LoopView;
 

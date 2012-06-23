@@ -26,11 +26,13 @@ $ -> # document.ready
     if platform is 'ios' or platform is 'android' then true
     else false
 
-
   window.loops     = new Loops()
+  window.loopView  = new LoopView(collection: loops)
   window.loopsView = new LoopsView
     collection: loops
+    subView:    loopView
   .render()
+
 
   $(document.body).addClass('show')
 

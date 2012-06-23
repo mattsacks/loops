@@ -23,12 +23,25 @@
         #resume.button r
         %h1.title.column loops
         #create.button +
+
+      #loop
+      %script{:id => "loop-detail-template", :type => "text/x-temmplate"}
+        :plain
+          <div id="delete" class="button">
+            Delete Loop
+          </div>
+
+          <div id="loop-buttons">
+              <div id="subtract" class="button">–</div>
+              <div id="amount">{{amount}}</div>
+              <div id="add" class="button">+</div>
+          </div>
           
       %ul#loops
       %script{:id => "loop-template", :type => "text/x-template"}
         :plain
           {{#loops}}
-            <li id="{{id}}" class="loop">
+            <li id="{{id}}" class="loop-item">
               <label>{{label}}</label>
             </li>
           {{/loops}}
@@ -37,21 +50,6 @@
           <li id="{{id}}" class="loop new-loop">
             <input placeholder="{{placeholder}}" class="new" />
           </li>
-
-      #delete.button Delete Loop
-
-      %script{:id => "loop-detail-template", :type => "text/x-temmplate"}
-        :plain
-          <div id="loop-buttons">
-            <div id="subtract" class="button">
-              -
-            </div>
-            <div id="amount">
-              {{amount}}
-            </div>
-            <div id="add" class="button">
-            </div>
-          </div>
 
       #data-buttons
         #import.button Import

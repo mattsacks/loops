@@ -1,0 +1,21 @@
+// run the border color through the spectrum
+=glow
+  @for $i from 0 through 10
+    #{$i * 10}%
+      $color: hsl($i * 36, 36, 52%)
+      border-color: rgba($color, 0.75)
+
+@-webkit-keyframes glow
+  +glow
+
+@-moz-keyframes glow
+  +glow
+
+@-ms-keyframes glow
+  +glow
+
+@-o-keyframes glow
+  +glow
+
+@keyframes glow
+  +glow

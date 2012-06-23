@@ -19,6 +19,20 @@
   -o-transition-duration: $time
   transition-duration: $time
 
+=translorm
+  -webkit-transition-property: -webkit-transform
+  -moz-transition-property: -moz-transform
+  -ms-transition-property: -ms-transform
+  -o-transition-property: -o-transform
+  transition-property: transform
+
+=transform($transformation)
+  -webkit-transform: $transformation
+  -moz-transform: $transformation
+  -ms-transform: $transformation
+  -o-transform: $transformation
+  transform: $transformation
+
 =remove-tap-highlight()
   -webkit-tap-highlight-color: rgba(0,0,0,0) !important
 
@@ -28,3 +42,63 @@
   -ms-user-select: $color
   -o-user-select: $color
   user-select: $color
+
+// flex box
+=flex-box
+  display: -webkit-flexbox
+  display: -moz-flexbox
+  display: -ms-flexbox
+  display: -o-flexbox
+  display: flexbox
+
+=flex-flow($flow)
+  -webkit-flex-flow: $flow
+  -moz-flex-flow: $flow
+  -ms-flex-flow: $flow
+  -o-flex-flow: $flow
+  flex-flow: $flow
+
+// animations
+=animate($time) 
+  -webkit-animation-fill-mode: both
+  -moz-animation-fill-mode: both
+  -ms-animation-fill-mode: both
+  -o-animation-fill-mode: both
+  animation-fill-mode: both
+
+  -webkit-animation-duration: $time
+  -moz-animation-duration: $time
+  -ms-animation-duration: $time
+  -o-animation-duration: $time
+  animation-duration: $time
+
+
+=animation-name($name) 
+  -webkit-animation-name: $name
+  -moz-animation-name: $name
+  -ms-animation-name: $name
+  -o-animation-name: $name
+  animation-name: $name
+
+
+=animation-delay($delay) 
+  -webkit-animation-delay: $delay
+  -moz-animation-delay: $delay
+  -ms-animation-delay: $delay
+  -o-animation-delay: $delay
+  animation-delay: $delay
+
+
+=animation-repeat($repeat) 
+  -webkit-animation-iteration-count: $repeat
+  -moz-animation-iteration-count: $repeat
+  -ms-animation-iteration-count: $repeat
+  -o-animation-iteration-count: $repeat
+  animation-iteration-count: $repeat
+
+=animation-timing($name) 
+  -webkit-animation-timing-function: $name
+  -moz-animation-timing-function: $name
+  -ms-animation-timing-function: $name
+  -o-animation-timing-function: $name
+  animation-timing-function: $name

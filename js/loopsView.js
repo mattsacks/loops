@@ -8,7 +8,7 @@ LoopsView = (function(_super) {
   __extends(LoopsView, _super);
 
   function LoopsView(options) {
-    var attrs;
+    var attrs, _ref;
     if (options == null) {
       options = {};
     }
@@ -18,7 +18,7 @@ LoopsView = (function(_super) {
     }
     this.preProcess();
     LoopsView.__super__.constructor.call(this, attrs);
-    this.collection = this.options.collection;
+    _ref = this.options, this.collection = _ref.collection, this.subView = _ref.subView;
     this.gather();
     this.attach();
     this.helpers = this.defineHelpers();
@@ -31,7 +31,7 @@ LoopsView = (function(_super) {
       var method, selector, _ref, _results;
       _this.clickEvent = window.mobile === true ? "tap" : "click";
       _this.clickEvents = {
-        '.loop': 'view'
+        '.loop-item': 'view'
       };
       _ref = _this.clickEvents;
       _results = [];
@@ -109,6 +109,7 @@ LoopsView = (function(_super) {
     if (!(model != null)) {
       model = this.collection.get($parent.attr('id'));
     }
+    console.log($parent, $parent.attr('id'));
     if (el.value === '' && model.get('label') === void 0) {
       return this.collection.remove(model);
     } else if (el.value === '') {
@@ -122,7 +123,7 @@ LoopsView = (function(_super) {
   };
 
   LoopsView.prototype.view = function(e) {
-    var $newLoop, $prev, el, newLoop, next, prev, top;
+    var $newLoop, el, newLoop;
     el = $(e.target);
     if (!el.is('li')) {
       return;
@@ -134,15 +135,28 @@ LoopsView = (function(_super) {
       el = $("#" + e.target.id);
       e.target = el[0];
     }
-    prev = e.target.previousElementSibling;
-    next = e.target.nextElementSibling;
-    if (el.hasClass('active')) {
-      $(document.body).removeClass('viewing');
-      el.siblings().css('-webkit-transform', 'translate3d(0,0,0)');
-      this.els.portability.css('-webkit-transform', 'translate3d(0,0,0)');
-      return el.removeClass('active').css('-webkit-transform', 'translate3d(0,-' + el.offset().top + 'px,0)');
+    if (this.slideList(e.target) === true) {
+      this.subView.render(null, this.collection.get(e.target.id));
+      return _.delay((function() {
+        return $(document.body).addClass('viewing');
+      }), 1);
     } else {
-      el.addClass('active').css('-webkit-transform', 'translate3d(0,-' + el.offset().top + 'px,0)');
+      return $(document.body).removeClass('viewing');
+    }
+  };
+
+  LoopsView.prototype.slideList = function(element) {
+    var $el, $prev, next, prev, top;
+    $el = $(element);
+    prev = element.previousElementSibling;
+    next = element.nextElementSibling;
+    if ($el.hasClass('active')) {
+      $el.removeClass('active').css('-webkit-transform', 'translate3d(0,-' + $el.offset().top + 'px,0)');
+      $el.siblings().css('-webkit-transform', 'translate3d(0,0,0)');
+      this.els.portability.css('-webkit-transform', 'translate3d(0,0,0)');
+      return false;
+    } else {
+      $el.addClass('active').css('-webkit-transform', 'translate3d(0,-' + $el.offset().top + 'px,0)');
       while (prev != null) {
         $prev = $(prev);
         top = $prev.offset().top + $prev.height();
@@ -154,7 +168,7 @@ LoopsView = (function(_super) {
         next = next.nextElementSibling;
       }
       this.els.portability.css('-webkit-transform', "translate3d(0," + window.innerHeight + "px,0)");
-      return $(document.body).addClass('viewing');
+      return true;
     }
   };
 
@@ -197,14 +211,14 @@ LoopsView = (function(_super) {
 
   LoopsView.prototype.postRender = function() {
     var height;
-    this.els.loops = this.element.find('.loop');
+    this.els.loops = this.element.find('.loop-item');
     if (this.collection.models.length > 0) {
       this.els.portability.addClass('show');
     } else {
       this.els.portability.removeClass('show');
     }
     height = this.els.loops.length * this.els.loops.height();
-    if (window.mobile === true && height >= 460) {
+    if (window.mobile === true && height >= 370) {
       return this.els.container.css({
         height: height + 130,
         'max-height': height + 130

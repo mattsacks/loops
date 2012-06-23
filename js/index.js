@@ -30,8 +30,12 @@ $(function() {
   window.platform = browser.Platform.name;
   window.mobile = platform === 'ios' || platform === 'android' ? true : false;
   window.loops = new Loops();
-  window.loopsView = new LoopsView({
+  window.loopView = new LoopView({
     collection: loops
+  });
+  window.loopsView = new LoopsView({
+    collection: loops,
+    subView: loopView
   }).render();
   return $(document.body).addClass('show');
 });

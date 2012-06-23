@@ -5,7 +5,7 @@ class LoopsView extends Backbone.View
 
     @preProcess()
     super(attrs)
-    @collection = @options.collection
+    {@collection, @subView} = @options
 
     @gather()
     @attach()
@@ -17,7 +17,7 @@ class LoopsView extends Backbone.View
       @clickEvent = if window.mobile is true then "tap" else "click"
 
       @clickEvents =
-        '.loop': 'view'
+        '.loop-item': 'view'
 
       for selector,method of @clickEvents
         @events["#{@clickEvent} #{selector}"] = method
@@ -68,6 +68,7 @@ class LoopsView extends Backbone.View
   save: (el, model) ->
     $parent = $(el).parent()
     if !model? then model = @collection.get($parent.attr('id'))
+    console.log($parent, $parent.attr('id'))
 
     if el.value is '' and model.get('label') is undefined
       return @collection.remove(model) # fires @delete
@@ -92,18 +93,29 @@ class LoopsView extends Backbone.View
       el = $("##{e.target.id}")
       e.target = el[0]
 
-    prev = e.target.previousElementSibling
-    next = e.target.nextElementSibling
-
-    if el.hasClass('active')
+    if @slideList(e.target) is true # viewing an element
+      @subView.render(null, @collection.get(e.target.id))
+      # lol, let transitions and shit fire
+      _.delay (-> $(document.body).addClass('viewing')), 1
+    else #closing a view
       $(document.body).removeClass('viewing')
-      el.siblings().css '-webkit-transform', 'translate3d(0,0,0)'
+
+  # open or close the loop list
+  slideList: (element) ->
+    $el = $(element)
+    prev = element.previousElementSibling
+    next = element.nextElementSibling
+
+    if $el.hasClass('active')
+      $el.removeClass('active').css '-webkit-transform',
+        'translate3d(0,-' + $el.offset().top + 'px,0)'
+      $el.siblings().css '-webkit-transform', 'translate3d(0,0,0)'
       @els.portability.css '-webkit-transform', 'translate3d(0,0,0)'
-      el.removeClass('active').css '-webkit-transform',
-        'translate3d(0,-' + el.offset().top + 'px,0)'
+
+      return false
     else
-      el.addClass('active').css '-webkit-transform',
-        'translate3d(0,-' + el.offset().top + 'px,0)'
+      $el.addClass('active').css '-webkit-transform',
+        'translate3d(0,-' + $el.offset().top + 'px,0)'
 
       while prev? # move previous siblings over the top by index
         $prev = $(prev)
@@ -115,7 +127,7 @@ class LoopsView extends Backbone.View
         next = next.nextElementSibling
 
       @els.portability.css '-webkit-transform', "translate3d(0,#{window.innerHeight}px,0)"
-      $(document.body).addClass('viewing')
+      return true
 
   # tapping the input
   edit: (e) ->
@@ -142,14 +154,14 @@ class LoopsView extends Backbone.View
     return this
 
   postRender: ->
-    @els.loops = @element.find('.loop')
+    @els.loops = @element.find('.loop-item')
 
     if @collection.models.length > 0 then @els.portability.addClass('show')
     else @els.portability.removeClass('show')
 
     # update height of container
     height = @els.loops.length * @els.loops.height()
-    if window.mobile is true and height >= 460
+    if window.mobile is true and height >= 370
       @els.container.css
         height:       height + 130 # buffer for bottom buttons
         'max-height': height + 130
