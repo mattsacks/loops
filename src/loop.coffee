@@ -16,6 +16,9 @@ class Loops extends Backbone.Collection
     'reset':  (model) ->
       localStorage.removeItem('loops')
       @localStorage = new Store('loops')
+    'change': (model,changes) ->
+      for change,bool of changes
+        if bool then @sync('update', model)
 
   sync: Backbone.sync.store
   save: -> @localStorage.save()

@@ -24,13 +24,16 @@
         %h1.title.column loops
         #create.button +
 
+      #delete.button Delete Loop
+      #loop-menu
+      %script{:id => "loop-menu-template", :type => "text/x-template"}
+        :plain
+          <div id="cancel" class="button">{{cancel}}</div>
+          <div id="save" class="button">{{save}}</div>
+
       #loop
       %script{:id => "loop-detail-template", :type => "text/x-temmplate"}
         :plain
-          <div id="delete" class="button">
-            Delete Loop
-          </div>
-
           <div id="loop-buttons">
               <div id="subtract" class="button">–</div>
               <div id="amount">{{amount}}</div>

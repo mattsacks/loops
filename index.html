@@ -24,12 +24,14 @@
         <h1 class='title column'>loops</h1>
         <div class='button' id='create'>+</div>
       </div>
+      <div class='button' id='delete'>Delete Loop</div>
+      <div id='loop-menu'></div>
+      <script id='loop-menu-template' type='text/x-template'>
+        <div id="cancel" class="button">{{cancel}}</div>
+        <div id="save" class="button">{{save}}</div>
+      </script>
       <div id='loop'></div>
       <script id='loop-detail-template' type='text/x-temmplate'>
-        <div id="delete" class="button">
-          Delete Loop
-        </div>
-        
         <div id="loop-buttons">
             <div id="subtract" class="button">–</div>
             <div id="amount">{{amount}}</div>

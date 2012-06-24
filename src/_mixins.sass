@@ -1,3 +1,10 @@
+=appearance($appearance)
+  -webkit-appearance: $appearance
+  -moz-appearance: $appearance
+  -ms-appearance: $appearance
+  -o-appearance: $appearance
+  appearance: $appearance
+
 =transition($transition)
   -webkit-transition: $transition
   -moz-transition: $transition
@@ -18,6 +25,13 @@
   -ms-transition-duration: $time
   -o-transition-duration: $time
   transition-duration: $time
+
+=transition-properties($properties)
+  -webkit-transition-property: $properties
+  -moz-transition-property: $properties
+  -ms-transition-property: $properties
+  -o-transition-property: $properties
+  transition-property: $properties
 
 =translorm
   -webkit-transition-property: -webkit-transform

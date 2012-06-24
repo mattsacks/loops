@@ -101,8 +101,9 @@ class LoopsView extends Backbone.View
 
     if @slideList(e.target) is true # viewing an element
       @subView.render(null, @collection.get(e.target.id))
-      # lol, let transitions and shit fire
-      _.delay (-> $(document.body).addClass('viewing')), 1
+      setTimeout ->
+        $(document.body).addClass('viewing')
+      , 1
     else #closing a view
       $(document.body).removeClass('viewing')
       @trigger('render', this)

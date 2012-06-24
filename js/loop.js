@@ -40,6 +40,19 @@ Loops = (function(_super) {
     'reset': function(model) {
       localStorage.removeItem('loops');
       return this.localStorage = new Store('loops');
+    },
+    'change': function(model, changes) {
+      var bool, change, _results;
+      _results = [];
+      for (change in changes) {
+        bool = changes[change];
+        if (bool) {
+          _results.push(this.sync('update', model));
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
     }
   };
 

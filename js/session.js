@@ -31,7 +31,7 @@ Session = (function(_super) {
           id: 'view'
         }
       ]);
-      this.set('view', window[view]);
+      this.set('view', this.view = window[view]);
     }
     this.views = [];
     _ref2 = this.viewNames;

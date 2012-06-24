@@ -10,7 +10,7 @@ class Session extends Backbone.Model
     if !@view? #default
       view = @viewNames[0]
       @sync.apply(this, ['create', view, id: 'view'])
-      @set('view', window[view])
+      @set('view', @view = window[view]) # set @view while setting it
 
     @views = []
     @views.push(window[i]) for i in @viewNames

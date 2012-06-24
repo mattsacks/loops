@@ -144,9 +144,9 @@ LoopsView = (function(_super) {
     }
     if (this.slideList(e.target) === true) {
       this.subView.render(null, this.collection.get(e.target.id));
-      return _.delay((function() {
+      return setTimeout(function() {
         return $(document.body).addClass('viewing');
-      }), 1);
+      }, 1);
     } else {
       $(document.body).removeClass('viewing');
       return this.trigger('render', this);
