@@ -32,10 +32,10 @@ Loops = (function(_super) {
 
   Loops.prototype.events = {
     'add': function(model) {
-      return this.sync('create', model);
+      return this.sync('create', model.attributes);
     },
     'remove': function(model) {
-      return this.sync('delete', model);
+      return this.sync('delete', model.attributes);
     },
     'reset': function(model) {
       localStorage.removeItem('loops');
@@ -47,7 +47,7 @@ Loops = (function(_super) {
       for (change in changes) {
         bool = changes[change];
         if (bool) {
-          _results.push(this.sync('update', model));
+          _results.push(this.sync('update', model.attributes));
         } else {
           _results.push(void 0);
         }
@@ -72,8 +72,181 @@ Loop = (function(_super) {
 
   function Loop(attributes, options) {
     attributes.id || (attributes.id = S4());
+    attributes = _.extend({}, {
+      amount: 0,
+      data: new Object()
+    }, attributes);
     Loop.__super__.constructor.call(this, attributes, options);
   }
+
+  Loop.prototype.rangeReset = function(range) {
+    switch (range) {
+      case 'days':
+        return function(date) {
+          return +moment(date).sod();
+        };
+      case 'weeks':
+        return function(date) {
+          return +moment(date).sod().day(0);
+        };
+      case 'months':
+        return function(date) {
+          return +moment(date).sod().date(1);
+        };
+    }
+  };
+
+  Loop.prototype.resetByRange = function(point, reset) {
+    var time;
+    time = +point.time;
+    return +moment(reset(time));
+  };
+
+  Loop.prototype.createBins = function(range) {
+    var bins, diff, i, reset, start, _i, _name;
+    reset = this[_name = "" + range + "Reset"] || (this[_name] = this.rangeReset(range));
+    bins = [];
+    diff = moment(this.endTime).sod().diff(moment(this.startTime).sod(), range);
+    if (diff === 0) {
+      diff === 1;
+    }
+    start = reset(this.startTime);
+    for (i = _i = 0; 0 <= diff ? _i <= diff : _i >= diff; i = 0 <= diff ? ++_i : --_i) {
+      bins.push(+moment(start).add(range, i));
+    }
+    return bins;
+  };
+
+  Loop.prototype.migrate = function(mappings, schemas, labels) {
+    var bins, data, i, index, key, mapping, x, _i, _j, _len, _ref, _ref1;
+    if (arguments.length === 0) {
+      return;
+    }
+    data = {};
+    for (key in mappings) {
+      mapping = mappings[key];
+      bins = labels[key];
+      if (bins != null) {
+        data[key] = new Array(bins.length);
+        for (i = _i = 0, _ref = bins.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          data[key][i] = _.copy(_.extend({}, schemas[key]), {
+            label: bins[i]
+          });
+        }
+      } else {
+        data[key] = new Array(this.modelData.length);
+      }
+    }
+    _ref1 = this.modelData;
+    for (i = _j = 0, _len = _ref1.length; _j < _len; i = ++_j) {
+      x = _ref1[i];
+      for (key in mappings) {
+        mapping = mappings[key];
+        bins = labels[key];
+        if ((labels[key] != null) && (schemas[key] != null)) {
+          index = bins.indexOf(mapping(x));
+          if (index === -1) {
+            continue;
+          }
+          data[key][index].points.push(x);
+          if (schemas[key].sum != null) {
+            data[key][index].sum += x.val;
+          }
+        } else {
+          data[key][i] = mapping(x, i);
+        }
+      }
+    }
+    return data;
+  };
+
+  Loop.prototype.collect = function() {
+    var dayBins, doy, labels, mappings, monthBins, schemas, time, todaysBins, val, weekBins, _i, _ref, _ref1, _results,
+      _this = this;
+    this.modelData = [];
+    _ref = this.get('data');
+    for (time in _ref) {
+      val = _ref[time];
+      this.modelData.push({
+        time: time,
+        val: val
+      });
+    }
+    if (this.modelData.length === 0) {
+      return;
+    }
+    this.start = this.modelData[0];
+    this.startTime = +this.start.time;
+    this.start = this.start.val;
+    if (this.modelData.length > 1) {
+      this.end = _.last(this.modelData);
+      this.endTime = +this.end.time;
+      this.end = this.end.val;
+    }
+    todaysBins = (function() {
+      _results = [];
+      for (var _i = 0, _ref1 = moment().hours(); 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; 0 <= _ref1 ? _i++ : _i--){ _results.push(_i); }
+      return _results;
+    }).apply(this);
+    dayBins = this.createBins('days');
+    weekBins = this.createBins('weeks');
+    monthBins = this.createBins('months');
+    schemas = {
+      today: {
+        by: 'hour',
+        points: [],
+        sum: 0
+      },
+      days: {
+        by: 'day',
+        points: [],
+        sum: 0
+      },
+      weeks: {
+        by: 'week',
+        points: [],
+        sum: 0
+      },
+      months: {
+        by: 'month',
+        points: [],
+        sum: 0
+      }
+    };
+    doy = function(point) {
+      if (point == null) {
+        point = void 0;
+      }
+      return +moment(point).format("DDD");
+    };
+    mappings = {
+      vals: function(p) {
+        return p.val;
+      },
+      today: function(p) {
+        if (doy(+p.time) !== doy()) {
+          return '#!@*';
+        }
+        return +moment(+p.time).hours();
+      },
+      days: function(p) {
+        return +_this.resetByRange(p, _this.daysReset);
+      },
+      weeks: function(p) {
+        return +_this.resetByRange(p, _this.weeksReset);
+      },
+      months: function(p) {
+        return +_this.resetByRange(p, _this.monthsReset);
+      }
+    };
+    labels = {
+      today: todaysBins,
+      days: dayBins,
+      weeks: weekBins,
+      months: monthBins
+    };
+    return this.latestData = this.migrate(mappings, schemas, labels);
+  };
 
   return Loop;
 

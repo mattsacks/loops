@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset='utf-8' />
     <title>Loops</title>
-    <meta content='True' name='HandheldFriendly'>
-    <meta content='320' name='MobileOptimized'>
-    <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0;' name='viewport'>
-    <meta content='yes' name='apple-mobile-web-app-capable'>
-    <meta content='black' name='apple-mobile-web-app-status-bar-style'>
-    <link href='icon-hi2/icon-hi3@2x.png' rel='apple-touch-icon-precomposed' sizes='114x114'>
-    <link href='favicon-hi.ico' rel='shortcut icon' type='images/x-icon'>
-    <link href='styles/stylesheet.css' rel='stylesheet'>
-    <script>
+    <meta content='True' name='HandheldFriendly' />
+    <meta content='320' name='MobileOptimized' />
+    <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0;' name='viewport' />
+    <meta content='yes' name='apple-mobile-web-app-capable' />
+    <meta content='black' name='apple-mobile-web-app-status-bar-style' />
+    <link href='icon-hi9/icon-hi9@2x.png' rel='apple-touch-icon-precomposed' sizes='114x114' />
+    <link href='favicon-hi.ico' rel='shortcut icon' type='images/x-icon' />
+    <link href='styles/stylesheet.css' rel='stylesheet' />
+    <script type='text/javascript'>
       //<![CDATA[
         document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
       //]]>
@@ -32,12 +32,22 @@
       </script>
       <div id='loop'></div>
       <script id='loop-detail-template' type='text/x-temmplate'>
-        <div id="loop-buttons">
-            <div id="subtract" class="button">–</div>
-            <div id="amount">{{amount}}</div>
-            <div id="add" class="button">+</div>
+        <div id="lighting"></div>
+        <div id="current-totals">
+          {{#currents}}
+            <div class="current">
+              <h3>{{sum}}</h3>
+              <span>{{headline}}</span>
+            </div>
+          {{/currents}}
         </div>
+        <div id="amount">{{amount}}</div>
       </script>
+      <div id='loop-buttons'>
+        <div class='button' id='subtract'>–</div>
+        <div id='amount-space'>&nbsp;</div>
+        <div class='button' id='add'>+</div>
+      </div>
       <ul id='loops'></ul>
       <script id='loop-template' type='text/x-template'>
         {{#loops}}
@@ -56,11 +66,12 @@
         <div class='button' id='export'>Export</div>
       </div>
     </div>
-    <script src='js/zepto.min.js'></script>
-    <script src='js/underscore-min.js'></script>
-    <script src='js/backbone-min.js'></script>
-    <script src='js/backbone-localstorage.js'></script>
-    <script src='js/hogan-2.0.0.js'></script>
+    <script src='js/lib/zepto.min.js'></script>
+    <script src='js/lib/underscore-min.js'></script>
+    <script src='js/lib/backbone-min.js'></script>
+    <script src='js/lib/backbone-localstorage.js'></script>
+    <script src='js/lib/mustache.js'></script>
+    <script src='js/lib/moment.min.js'></script>
     <script src='js/session.js'></script>
     <script src='js/loop.js'></script>
     <script src='js/loopsView.js'></script>

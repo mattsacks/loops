@@ -30,13 +30,14 @@ LoopView = (function(_super) {
 
   LoopView.prototype.gather = function() {
     this.templates = {
-      loop: Hogan.compile(this.options.loopTemplate),
-      menu: Hogan.compile(this.options.menuTemplate)
+      loop: this.options.loopTemplate,
+      menu: this.options.menuTemplate
     };
     this.element = this.$el;
     return this.els = {
       "delete": $('#delete'),
-      menu: $('#loop-menu')
+      menu: $('#loop-menu'),
+      buttons: $('#loop-buttons')
     };
   };
 
@@ -45,7 +46,7 @@ LoopView = (function(_super) {
       _this = this;
     _.bindAll(this, 'edit', 'mod');
     this.clickEvent = window.mobile === true ? "tap" : "click";
-    this.clickEvents = {
+    this.buttonEvents = {
       '#amount': {
         method: "edit",
         args: ["amount"]
@@ -59,25 +60,30 @@ LoopView = (function(_super) {
         args: ["amount", 1]
       }
     };
-    _ref = this.clickEvents;
+    _ref = this.buttonEvents;
     for (selector in _ref) {
       run = _ref[selector];
-      this.element.on(this.clickEvent, selector, _.bind.apply(_, [this[run.method], this].concat(__slice.call(run.args))));
+      this.els.buttons.on(this.clickEvent, selector, _.bind.apply(_, [this[run.method], this].concat(__slice.call(run.args))));
     }
-    this.els["delete"].on('click', _.bind(this.menu, this, 'delete'));
+    this.els["delete"].on(this.clickEvent, _.bind(this.menu, this, 'delete', ''));
     return $(document).on(this.clickEvent, "body.menu", function(e) {
-      var $body, el, id;
+      var $body, el, id, operation, _base, _name;
       el = $(e.target);
       id = el.attr('id');
       $body = $(document.body);
-      if (el.parent().attr('id') !== 'menu-buttons' && id !== 'delete') {
+      if (!$body.hasClass('viewing')) {
+        $body.removeClass(_this.menuClass);
+      } else if ($body.hasClass('mod')) {
+        '';
+
+      } else if (el.parent().attr('id') !== 'menu-buttons' && !el.hasClass('button')) {
         $body.removeClass(_this.menuClass);
       }
-      if (id === "save") {
-        return _this[el.html().toLowerCase()]();
-      } else if (id === "cancel") {
-        return $body.removeClass(_this.menuClass);
+      if (el.is('.loop-item')) {
+        return;
       }
+      operation = $body.attr('class').match(/menu-(\w+)/)[1];
+      return typeof (_base = _this.helpers[operation])[_name = "on" + id] === "function" ? _base[_name]() : void 0;
     });
   };
 
@@ -87,13 +93,17 @@ LoopView = (function(_super) {
     var val;
     val = (this.model.get(prop) || 0) + amount;
     this.els[prop].html(val);
-    return this.model.set(prop, val);
+    this.model.set(prop, val);
+    return this.menu('save', 'mod');
   };
 
-  LoopView.prototype.menu = function(operation) {
+  LoopView.prototype.menu = function(operation, menu) {
     var html;
-    this.menuClass = "menu menu-" + operation;
-    html = this.templates.menu.render(this.helpers[operation]);
+    if (menu == null) {
+      menu = '';
+    }
+    this.menuClass = "menu menu-" + operation + " " + menu;
+    html = Mustache.render(this.templates.menu, this.helpers[operation]);
     this.els.menu.html(html);
     return $(document.body).addClass(this.menuClass);
   };
@@ -123,21 +133,44 @@ LoopView = (function(_super) {
     return this.collection.remove(this.model.get('id'));
   };
 
+  LoopView.prototype.save = function() {
+    var data, point;
+    point = {
+      val: this.model.get('amount'),
+      time: +new Date()
+    };
+    data = this.model.get('data');
+    data[this.currentPoint || point.time] = point.val;
+    this.model.set('data', data);
+    this.collection.save();
+    this.cancel();
+    return this.render();
+  };
+
+  LoopView.prototype.cancel = function() {
+    this.model.set('amount', 0);
+    this.els.amount.html(0);
+    $(document.body).removeClass(this.menuClass);
+    return this.menuClass = '';
+  };
+
   LoopView.prototype.render = function(template, model) {
     if (template == null) {
       template = this.templates.loop;
     }
-    this.model = model;
+    this.model = model != null ? model : this.model;
+    debugger;
     if (!(this.helpers != null)) {
       this.helpers = this.defineHelpers();
     }
-    this.latestTemplateData = _.extend({}, this.helpers, this.model);
-    this.element.html(template.render(this.latestTemplateData));
+    if (this.model.get('amount') !== 0) {
+      this.menu('save', 'mod');
+    }
+    this.latestTemplateData = _.extend({}, this.helpers, this.model.attributes);
+    this.element.html(Mustache.render(template, this.latestTemplateData));
     this.postRender();
     return this.trigger('render', this, model);
   };
-
-  LoopView.prototype.openMenu = function() {};
 
   LoopView.prototype.postRender = function() {
     return _.extend(this.els, {
@@ -151,20 +184,51 @@ LoopView = (function(_super) {
   };
 
   LoopView.prototype.defineHelpers = function() {
-    var thiz;
+    var thiz,
+      _this = this;
     thiz = this;
     return {
-      amount: function() {
-        var val;
-        val = this.get('amount') || 0;
-        if (val !== 0) {
-          thiz.openMenu();
-        }
-        return val;
-      },
       "delete": {
+        oncancel: function() {
+          return $(document.body).removeClass(_this.menuClass);
+        },
         cancel: "Cancel",
+        onsave: _.bind(this["delete"], this),
         save: "Delete"
+      },
+      save: {
+        oncancel: _.bind(this.cancel, this),
+        cancel: "Cancel",
+        onsave: _.bind(this.save, this),
+        save: "Save"
+      },
+      currents: function() {
+        var collection, current, data, interesting, _i, _len;
+        data = _this.model.collect();
+        if (!(data != null)) {
+          return;
+        }
+        interesting = [data.today, data.weeks, data.months];
+        current = _.map(interesting, function(x) {
+          return _.last(x);
+        });
+        for (_i = 0, _len = current.length; _i < _len; _i++) {
+          collection = current[_i];
+          collection.headline = (function() {
+            switch (collection.by) {
+              case 'hour':
+                return 'Today';
+              case 'week':
+                return 'This Week';
+              case 'month':
+                return 'This Month';
+            }
+          })();
+        }
+        return current;
+      },
+      amount: function() {
+        return _this.model.attributes.amount || 0;
       }
     };
   };

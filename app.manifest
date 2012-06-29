@@ -1,20 +1,22 @@
 CACHE MANIFEST
-# 1340551820
+# 1340944006
 
 index.html
 styles/stylesheet.css
-js/zepto.min.js
-js/underscore-min.js
-js/backbone-min.js
-js/backbone-localstorage.js
-js/hogan-2.0.0.js
+js/lib/zepto.min.js
+js/lib/underscore-min.js
+js/lib/backbone-min.js
+js/lib/backbone-localstorage.js
+js/lib/hogan-2.0.0.js
 js/loop.js
 js/loopView.js
 js/loopsView.js
 js/session.js
 js/index.js
+fonts/Lato-Light.ttf
 fonts/Lato-Regular.ttf
 fonts/Lato-Black.ttf
 fonts/OpenSans-Bold.ttf
 fonts/OpenSans-Semibold.ttf
 fonts/PT_Sans-Caption-Regular.ttf
+fonts/PT_Sans-Caption-Bold.ttf

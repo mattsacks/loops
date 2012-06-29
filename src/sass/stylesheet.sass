@@ -24,7 +24,16 @@ body
         max-height: 460px !important
 
     #loop
-      opacity: 1
+      #lighting, #current-totals
+        +transition-duration(0.15s)
+        opacity: 1
+
+      #amount
+        +transition-duration(0.2s)
+        +transition-delay(0.13s)
+        +transform(translate3d(0,0,0))
+        bottom: 0px
+
 
     #delete
       +transition-delay(0.2s)
@@ -56,7 +65,7 @@ body
 
   +respond-to(desktop)
     // TODO do a more precise media query
-    min-height: 800px
+    min-height: 780px
   +respond-to(handheld)
     height: 460px
     max-height: 460px
@@ -159,16 +168,70 @@ h1.title
       +transition-properties(opacity)
       opacity: 0
       
+// the individual loop
 #loop
-  +transition(opacity 0.17s linear)
-  background-color: #363535
-  height: 100%
-  left: 0
-  position: absolute
-  top: 0
-  width: 100%
-  opacity: 0
-  z-index: 1
+  color: rgb(240,240,240)
+
+  #lighting
+    +transition(opacity 0.1s linear)
+    background-color: #363535
+    height: 100%
+    left: 0
+    opacity: 0
+    position: absolute
+    top: 0
+    width: 100%
+    z-index: 0
+
+  #amount
+    +transition(none 0.2s ease-out)
+    +translorm
+    position: absolute
+    bottom: 0
+    left: 0
+    text-align: center
+    width: 100%
+    font-family: "PT Sans"
+    text-shadow: 0 none
+
+    +respond-to(desktop)
+      +transform(translate3d(0px,180px,0))
+      font-size: 90px
+      padding-bottom: 50px
+    +respond-to(handheld)
+      +transform(translate3d(0px,120px,0))
+      font-size: 70px
+
+  #current-totals
+    +transition(opacity 0.1s linear)
+    margin-top: 10px
+    opacity: 0
+    position: absolute
+    width: 100%
+
+    .current
+      display: inline-block
+      font-size: 0
+      text-align: center
+
+      +respond-to(desktop)
+        width: 33%
+      +respond-to(handheld)
+        width: 32%
+
+      h3
+        font-family: "PT Sans Bold"
+        font-weight: normal
+        +respond-to(desktop)
+          font-size: 60px
+        +respond-to(handheld)
+          font-size: 40px
+
+      span
+        font-family: "LatoLight"
+        font-weight: normal
+        font-size: 13px
+
 
 // delete button on showing a loop
 #delete
@@ -198,6 +261,7 @@ h1.title
   &:active
     background-color: blue
 
+// the duder at the top right Cancel & Save
 #loop-menu
   +transition(none 0.17s)
   +translorm
@@ -226,26 +290,26 @@ h1.title
       padding: 18px 7px
       width: 60px
 
-
+// the dudes at the bottom, - the glowy gate and +
 #loop-buttons
   +transition(none 0.2s ease-out)
   +translorm
   left: 0
   position: absolute
   width: 100%
+  z-index: 3
 
   +respond-to(desktop)
-    +transform(translate3d(0px,180px,0))
+    +transform(translate3d(0px,320px,0))
     bottom: -10px
   +respond-to(handheld)
     +transform(translate3d(0px,120px,0))
     bottom: 14px
 
-  .button, #amount
-    color: rgb(240,240,240)
+  .button, #amount-space
     position: relative
     
-  #amount
+  #amount-space
     +animate(10s)
     +animation-name(glow)
     +animation-repeat(infinite)
@@ -254,23 +318,22 @@ h1.title
     border-top: 2px solid transparent
     box-shadow: inset 0 1px 0 rgba(250,250,250,0.13), 0 -1px 5px rgba(5,5,5,0.3)
     float: left
-    font-family: "PT Sans"
-    text-shadow: 0 none
     margin-left: -1px
-    text-align: center
     width: 48%
 
     +respond-to(desktop)
-      border-top-left-radius: 100px
-      border-top-right-radius: 100px
+      border-top-left-radius: 25px
+      border-top-right-radius: 25px
+      border-width: 3px
       padding-right: 8px
       padding-bottom: 150px
       font-size: 60px
     +respond-to(handheld)
-      border-top-left-radius: 30px
-      border-top-right-radius: 30px
+      border-top-left-radius: 15px
+      border-top-right-radius: 15px
       padding-right: 2px
       vertical-align: middle
+      padding-bottom: 5px
       font-size: 70px
 
   #add, #subtract
@@ -345,4 +408,4 @@ footer
     position: absolute
     right: 200px
 
-// vim: fdm=indent fdn=2 fml=3
+// vim: fdm=indent fdn=2 fml=3 fdl=1

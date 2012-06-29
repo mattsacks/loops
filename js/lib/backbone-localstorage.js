@@ -39,14 +39,14 @@ _.extend(Store.prototype, {
 
   // Update a model by replacing its copy in `this.data`.
   update: function(model, options) {
-    this.data[(options && options.id) || model.get('id')] = model;
+    this.data[(options && options.id) || model.id || model.get('id')] = model;
     this.save();
     return model;
   },
 
   // Retrieve a model from `this.data` by id.
   find: function(model) {
-    return this.data[model.get('id')];
+    return this.data[model.id || model.get('id')];
   },
 
   // Return the array of all models currently in storage.
@@ -56,7 +56,7 @@ _.extend(Store.prototype, {
 
   // Delete a model from `this.data`, returning it.
   destroy: function(model, options) {
-    var id = (options && options.id) || model.get('id');
+    var id = (options && options.id) || model.id || model.get('id');
     delete this.data[id];
     this.save();
     return model;

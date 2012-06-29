@@ -10,7 +10,7 @@
     %meta{:name => "apple-mobile-web-app-capable", :content => "yes"}
     %meta{:name => "apple-mobile-web-app-status-bar-style", :content =>"black"}
 
-    %link{:rel => "apple-touch-icon-precomposed", :sizes => "114x114", :href => "icon-hi2/icon-hi3@2x.png"}
+    %link{:rel => "apple-touch-icon-precomposed", :sizes => "114x114", :href => "icon-hi9/icon-hi9@2x.png"}
     %link{:rel => 'shortcut icon', :href => 'favicon-hi.ico', :type => 'images/x-icon'}
     %link{:rel => 'stylesheet', :href => 'styles/stylesheet.css'}
     -# livereload
@@ -34,11 +34,20 @@
       #loop
       %script{:id => "loop-detail-template", :type => "text/x-temmplate"}
         :plain
-          <div id="loop-buttons">
-              <div id="subtract" class="button">–</div>
-              <div id="amount">{{amount}}</div>
-              <div id="add" class="button">+</div>
+          <div id="lighting"></div>
+          <div id="current-totals">
+            {{#currents}}
+              <div class="current">
+                <h3>{{sum}}</h3>
+                <span>{{headline}}</span>
+              </div>
+            {{/currents}}
           </div>
+          <div id="amount">{{amount}}</div>
+      #loop-buttons
+        #subtract.button –
+        #amount-space &nbsp;
+        #add.button +
           
       %ul#loops
       %script{:id => "loop-template", :type => "text/x-template"}
@@ -58,11 +67,12 @@
         #import.button Import
         #export.button Export
 
-    %script{:src => 'js/zepto.min.js'}=""
-    %script{:src => 'js/underscore-min.js'}=""
-    %script{:src => 'js/backbone-min.js'}=""
-    %script{:src => 'js/backbone-localstorage.js'}=""
-    %script{:src => 'js/hogan-2.0.0.js'}=""
+    %script{:src => 'js/lib/zepto.min.js'}=""
+    %script{:src => 'js/lib/underscore-min.js'}=""
+    %script{:src => 'js/lib/backbone-min.js'}=""
+    %script{:src => 'js/lib/backbone-localstorage.js'}=""
+    %script{:src => 'js/lib/mustache.js'}=""
+    %script{:src => 'js/lib/moment.min.js'}=""
 
     %script{:src => 'js/session.js'}=""
     %script{:src => 'js/loop.js'}=""

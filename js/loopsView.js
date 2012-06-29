@@ -31,7 +31,8 @@ LoopsView = (function(_super) {
       var method, selector, _ref, _results;
       _this.clickEvent = window.mobile === true ? "tap" : "click";
       _this.clickEvents = {
-        '.loop-item': 'view'
+        '.loop-item': 'view',
+        'label': 'edit'
       };
       _ref = _this.clickEvents;
       _results = [];
@@ -51,8 +52,8 @@ LoopsView = (function(_super) {
       container: $('.container')
     };
     return this.templates = {
-      loops: Hogan.compile($("#" + this.options.templateId).html()),
-      "new": Hogan.compile($("#" + this.options.newLoopTemplateId).html())
+      loops: $("#" + this.options.templateId).html(),
+      "new": $("#" + this.options.newLoopTemplateId).html()
     };
   };
 
@@ -84,9 +85,7 @@ LoopsView = (function(_super) {
 
   LoopsView.prototype.el = '#loops';
 
-  LoopsView.prototype.events = {
-    'click label': 'edit'
-  };
+  LoopsView.prototype.events = {};
 
   LoopsView.prototype.defaults = {
     templateId: 'loop-template',
@@ -94,12 +93,13 @@ LoopsView = (function(_super) {
   };
 
   LoopsView.prototype["new"] = function(model, replace) {
-    var data;
+    var data, html;
     data = _.extend({}, this.helpers, model.toJSON());
+    html = Mustache.render(this.templates["new"], data);
     if (replace) {
-      replace.outerHTML = this.templates["new"].render(data);
+      replace.outerHTML = html;
     } else {
-      this.element.prepend(this.templates["new"].render(data));
+      this.element.prepend(html);
     }
     return this.$('.new').focus();
   };
@@ -118,12 +118,13 @@ LoopsView = (function(_super) {
       value = el.value;
     }
     model.set('label', value);
-    this.collection.sync('update', model);
+    this.collection.sync('update', model.attributes);
     return this.render();
   };
 
   LoopsView.prototype.view = function(e) {
-    var $newLoop, el, newLoop;
+    var $newLoop, el, newLoop,
+      _this = this;
     el = $(e.target);
     if (!el.is('li')) {
       return;
@@ -145,10 +146,11 @@ LoopsView = (function(_super) {
     if (this.slideList(e.target) === true) {
       this.subView.render(null, this.collection.get(e.target.id));
       return setTimeout(function() {
-        return $(document.body).addClass('viewing');
+        return $(document.body).attr('class', 'show viewing ' + _this.subView.menuClass);
       }, 1);
     } else {
-      $(document.body).removeClass('viewing');
+      this.subView.menuClass = '';
+      $(document.body).attr('class', 'show');
       return this.trigger('render', this);
     }
   };
@@ -184,19 +186,18 @@ LoopsView = (function(_super) {
     var el, model;
     el = $(e.target).parent();
     if (el.hasClass('active')) {
-      return;
+      return this.view({
+        target: el[0]
+      });
     }
     model = this.collection.get(el.attr('id'));
     return this["new"](model, el[0]);
   };
 
   LoopsView.prototype["delete"] = function(model) {
-    var el;
-    el = $("#" + model.id);
-    if (el.hasClass('active')) {
-      return;
-    }
-    return el.remove();
+    var id;
+    id = model.get('id');
+    return $("#" + id).remove();
   };
 
   LoopsView.prototype.render = function(template, data) {
@@ -211,7 +212,7 @@ LoopsView = (function(_super) {
       loops: data
     });
     this.latestTemplateData = templateData;
-    html = template.render(templateData);
+    html = Mustache.render(template, templateData);
     this.element.html(html);
     this.postRender();
     return this;

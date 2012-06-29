@@ -5,12 +5,15 @@ class LoopsView extends Backbone.View
 
     @preProcess()
     super(attrs)
+
+    # TODO throw an error, these are required to be passed in
     {@collection, @subView} = @options
 
-    @gather()
-    @attach()
-    @helpers = @defineHelpers()
+    @gather() # gatehr elements
+    @attach() # attach bindings to them
+    @helpers = @defineHelpers() # cache template helpers for rendering
 
+  # mostly to add proper 'click' or 'tap' events to the @events object
   preProcess: ->
     # sets up click/tap handlers
     addClicks = do =>
@@ -18,10 +21,12 @@ class LoopsView extends Backbone.View
 
       @clickEvents =
         '.loop-item': 'view'
+        'label':      'edit'
 
       for selector,method of @clickEvents
         @events["#{@clickEvent} #{selector}"] = method
 
+  # cache templates, elements, jQuery objects, etc
   gather: ->
     @element = this.$el
     @els =
@@ -29,9 +34,10 @@ class LoopsView extends Backbone.View
       portability: $('#data-buttons')
       container: $('.container')
     @templates =
-      loops: Hogan.compile($("##{@options.templateId}").html())
-      new:   Hogan.compile($("##{@options.newLoopTemplateId}").html())
+      loops: $("##{@options.templateId}").html()
+      new:   $("##{@options.newLoopTemplateId}").html()
 
+  # bind methods to events on the gathered elements
   attach: ->
     _.bindAll this, 'edit', 'view', 'delete'
 
@@ -45,26 +51,31 @@ class LoopsView extends Backbone.View
       newLoop.blur() if newLoop.length > 0
       @collection.add([new Loop({})])
 
-    @collection.on 'add', (model) => @new(model)
+    @collection.on 'add', (model) => @new(model) # FIXME edit should handle replacing the element
     @collection.on 'reset', => @render()
     @collection.on 'remove', (model) => @delete(model)
 
     @subView.on 'restore', _.bind(@restore, this)
 
-  el: '#loops'
+  el: '#loops' # the jQuery reference to refer to in @element
 
-  events:
-    'click label': 'edit'
+  events: {} # gets modified in @preProcess before calling super
 
+  # merged into the passed in attributes if not overridden in the constructor
   defaults:
     templateId: 'loop-template'
     newLoopTemplateId: 'loop-new-template'
 
+  # model:   a model to grab attributes from if editing it
+  # replace: an element to replace with the new Loop template otherwise, 
+  #          just add it to the top of the view
   new: (model, replace) ->
     data = _.extend {}, @helpers, model.toJSON()
-    if replace then replace.outerHTML = @templates.new.render(data)
-    else @element.prepend(@templates.new.render(data))
-    @$('.new').focus() # trigger's view on new element
+    html = Mustache.render(@templates.new, data)
+
+    # replace in the case of editing an existing transaction
+    if replace then replace.outerHTML = html else @element.prepend(html)
+    @$('.new').focus() # focus the name of the new loop
 
   # occurs on 'blur' for a '.new-loop'
   save: (el, model) ->
@@ -78,7 +89,7 @@ class LoopsView extends Backbone.View
     else value = el.value
 
     model.set('label', value)
-    @collection.sync 'update', model
+    @collection.sync 'update', model.attributes
     @render()
 
   # tapping a .loop item to view it
@@ -101,27 +112,30 @@ class LoopsView extends Backbone.View
 
     if @slideList(e.target) is true # viewing an element
       @subView.render(null, @collection.get(e.target.id))
-      setTimeout ->
-        $(document.body).addClass('viewing')
+      setTimeout =>
+        $(document.body).attr('class', 'show viewing ' + @subView.menuClass)
       , 1
     else #closing a view
-      $(document.body).removeClass('viewing')
+      @subView.menuClass = ''
+      $(document.body).attr('class', 'show') # FIXME this will fuck me
       @trigger('render', this)
 
   # open or close the loop list
+  # returns: true if ending as opened (viewing a loop)
+  #          false if ending as closed (now viewing the loop list)
   slideList: (element) ->
     $el = $(element)
     prev = element.previousElementSibling
     next = element.nextElementSibling
 
-    if $el.hasClass('active')
+    if $el.hasClass('active') # close viewing a loop
       $el.removeClass('active').css '-webkit-transform',
         'translate3d(0,-' + $el.offset().top + 'px,0)'
       $el.siblings().css '-webkit-transform', 'translate3d(0,0,0)'
       @els.portability.css '-webkit-transform', 'translate3d(0,0,0)'
 
-      return false
-    else
+      return false # the view is closed
+    else # open a loop!
       $el.addClass('active').css '-webkit-transform',
         'translate3d(0,-' + $el.offset().top + 'px,0)'
 
@@ -135,49 +149,61 @@ class LoopsView extends Backbone.View
         next = next.nextElementSibling
 
       @els.portability.css '-webkit-transform', "translate3d(0,#{window.innerHeight}px,0)"
-      return true
+      return true # the view is now open
 
-  # tapping the input
+  # called on tapping the name of a loop in any view
+  # e is an event object which should represent the <input> element inside a .loop-item
   edit: (e) ->
     el = $(e.target).parent()
-    return if el.hasClass('active')
+    # if tapping on the name when viewing a loop, probably intend to close it
+    # so call the view method as if tapping the list item
+    return @view(target: el[0]) if el.hasClass('active')
+
+    # call the new method so it can just do an outerHTML on the loop-item with
+    # the same template and data and stuff
     model = @collection.get(el.attr('id'))
     @new(model, el[0])
 
+  # removes an empty new Loop item FIXME this could be tuned
   delete: (model) ->
-    el = $("##{model.id}")
-    return if el.hasClass('active')
-    el.remove()
+    id = model.get('id')
+    $("##{id}").remove()
 
+  # render the loop-list
   render: (template = @templates.loops, data) ->
     data = data or _.sortBy @collection.toJSON(), (i) ->
-      -1 * @get(i.id).cid.slice(1) # neweset first
+      -1 * @get(i.id).cid.slice(1) # newest first
     , @collection
 
     templateData = _.extend {}, @helpers, loops: data
     @latestTemplateData = templateData
-    html = template.render(templateData)
+    html = Mustache.render(template, templateData)
     @element.html(html)
     @postRender()
     return this
 
   postRender: ->
+    # stash the rendered loop elements
     @els.loops = @element.find('.loop-item')
 
+    # if there's now more than one loop, show the export option
     if @collection.models.length > 0 then @els.portability.addClass('show')
     else @els.portability.removeClass('show')
 
-    # update height of container
+    # update height of container FIXME
     height = @els.loops.length * @els.loops.height()
     if window.mobile is true and height >= 370
       @els.container.css
         height:       height + 130 # buffer for bottom buttons
         'max-height': height + 130
 
+  # called on loading the page if the session.view value is 'loopView'
+  # when called from LoopView with a model, view that Loop
   restore: (model) ->
     @render()
     if model then @view(target: $("##{model.id}")[0])
 
+  # helpers used in the mustache templates in @templates
   defineHelpers: ->
     thiz = this
 

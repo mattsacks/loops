@@ -1,3 +1,34 @@
+# add functionality to moment.js
+do (moment) ->
+
+  # get or set the week of the year
+  # this may or may not be accurate..
+  moment.fn.week = (week) ->
+    # start of the year from day of the week mod
+    mod = moment().date(1).month(0).day() % 7
+
+    # if no amount to set passed, then return the week set
+    return Math.floor((+@format("DDD") + mod) / 7) if !week?
+
+    # else set the week, but keep it on the same day of the week
+    doy = (@day() - mod) + ((week-1) * 7)
+    return @date(1).month(0).add('days', doy)
+
+(moment)
+
+# i can't believe people put up with this bullshit underscore
+do (_) ->
+  _.mixin
+    # copies everything into a new object
+    copy: (properties) ->
+      obj = {}
+      for key, value of properties
+        obj[key] = if Array.isArray(value) then value.slice() else value
+      return obj
+(_)
+
+
+
 class Browser
   constructor: ->
     @lUA = navigator.userAgent.toLowerCase()
