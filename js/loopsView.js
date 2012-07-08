@@ -156,28 +156,29 @@ LoopsView = (function(_super) {
   };
 
   LoopsView.prototype.slideList = function(element) {
-    var $el, $prev, next, prev, top;
+    var $el, $prev, next, prev, top, transform;
     $el = $(element);
     prev = element.previousElementSibling;
     next = element.nextElementSibling;
+    transform = browser.flag + "transform";
     if ($el.hasClass('active')) {
-      $el.removeClass('active').css('-webkit-transform', 'translate3d(0,-' + $el.offset().top + 'px,0)');
-      $el.siblings().css('-webkit-transform', 'translate3d(0,0,0)');
-      this.els.portability.css('-webkit-transform', 'translate3d(0,0,0)');
+      $el.removeClass('active').css(transform, 'translate3d(0,-' + $el.offset().top + 'px,0)');
+      $el.siblings().css(transform, 'translate3d(0,0,0)');
+      this.els.portability.css(transform, 'translate3d(0,0,0)');
       return false;
     } else {
-      $el.addClass('active').css('-webkit-transform', 'translate3d(0,-' + $el.offset().top + 'px,0)');
+      $el.addClass('active').css(transform, 'translate3d(0,-' + $el.offset().top + 'px,0)');
       while (prev != null) {
         $prev = $(prev);
         top = $prev.offset().top + $prev.height();
-        $prev.css('-webkit-transform', 'translate3d(0,-' + top + 'px,0)');
+        $prev.css(transform, 'translate3d(0,-' + top + 'px,0)');
         prev = prev.previousElementSibling;
       }
       while (next != null) {
-        $(next).css('-webkit-transform', "translate3d(0," + window.innerHeight + "px,0)");
+        $(next).css(transform, "translate3d(0," + window.innerHeight + "px,0)");
         next = next.nextElementSibling;
       }
-      this.els.portability.css('-webkit-transform', "translate3d(0," + window.innerHeight + "px,0)");
+      this.els.portability.css(transform, "translate3d(0," + window.innerHeight + "px,0)");
       return true;
     }
   };

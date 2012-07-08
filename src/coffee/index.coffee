@@ -1,19 +1,7 @@
 # add functionality to moment.js
 do (moment) ->
-
-  # get or set the week of the year
-  # this may or may not be accurate..
-  moment.fn.week = (week) ->
-    # start of the year from day of the week mod
-    mod = moment().date(1).month(0).day() % 7
-
-    # if no amount to set passed, then return the week set
-    return Math.floor((+@format("DDD") + mod) / 7) if !week?
-
-    # else set the week, but keep it on the same day of the week
-    doy = (@day() - mod) + ((week-1) * 7)
-    return @date(1).month(0).add('days', doy)
-
+  # get the week of the year
+  moment.fn.week = (week) -> +@format("w")
 (moment)
 
 # i can't believe people put up with this bullshit underscore
@@ -42,12 +30,26 @@ class Browser
     @Platform =
       name: if @lUA.match(/ip(?:ad|od|hone)/) then 'ios' else (@lUA.match(/(?:webos|android)/) or @platform.match(/mac|win|linux/) || ['other'])[0]
 
-    @Features = 
+    @Features =
       xpath: !!(document.evaluate)
       air:   !!(window.runtime)
       query: !!(document.querySelector)
       json:  !!(window.JSON)
 
+    @flag =
+      if @name is 'unknown'
+        switch(@Platform.name)
+          when 'ios' then '-webkit-'
+          when 'android' then '-webkit-'
+          when 'webos'   then '-webkit-'
+      else
+        switch(@name) # css flag
+          when 'chrome' then '-webkit-'
+          when 'safari' then '-webkit-'
+          when 'firefox' then '-moz-'
+          when 'ie' then '-ms-'
+          when 'opera' then '-o-'
+          else ''
 
 $ -> # document.ready
   # window.session = new Session(data.session)
@@ -57,9 +59,10 @@ $ -> # document.ready
     if platform is 'ios' or platform is 'android' then true
     else false
 
-  window.loops     = new Loops()
-  window.loopView  = new LoopView(collection: loops)
-  window.loopsView = new LoopsView
+  window.loops      = new Loops()
+  window.loopView   = new LoopView(collection: loops)
+  window.timeseries = new TimeSeries(view: loopView)
+  window.loopsView  = new LoopsView
     collection: loops
     subView:    loopView
 

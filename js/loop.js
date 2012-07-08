@@ -74,13 +74,19 @@ Loop = (function(_super) {
     attributes.id || (attributes.id = S4());
     attributes = _.extend({}, {
       amount: 0,
-      data: new Object()
+      data: new Object(),
+      range: 'day',
+      period: 'today'
     }, attributes);
     Loop.__super__.constructor.call(this, attributes, options);
   }
 
   Loop.prototype.rangeReset = function(range) {
     switch (range) {
+      case 'hours':
+        return function(date) {
+          return +moment(date).hours();
+        };
       case 'days':
         return function(date) {
           return +moment(date).sod();
@@ -93,24 +99,29 @@ Loop = (function(_super) {
         return function(date) {
           return +moment(date).sod().date(1);
         };
+      default:
+        return function(date) {
+          return +date;
+        };
     }
   };
 
-  Loop.prototype.resetByRange = function(point, reset) {
+  Loop.prototype.resetRange = function(point, reset) {
     var time;
     time = +point.time;
     return +moment(reset(time));
   };
 
   Loop.prototype.createBins = function(range) {
-    var bins, diff, i, reset, start, _i, _name;
+    var bins, diff, end, i, reset, start, _i, _name;
     reset = this[_name = "" + range + "Reset"] || (this[_name] = this.rangeReset(range));
     bins = [];
-    diff = moment(this.endTime).sod().diff(moment(this.startTime).sod(), range);
+    start = reset(this.startTime);
+    end = reset(this.endTime);
+    diff = moment(end).diff(moment(start), range);
     if (diff === 0) {
       diff === 1;
     }
-    start = reset(this.startTime);
     for (i = _i = 0; 0 <= diff ? _i <= diff : _i >= diff; i = 0 <= diff ? ++_i : --_i) {
       bins.push(+moment(start).add(range, i));
     }
@@ -129,9 +140,9 @@ Loop = (function(_super) {
       if (bins != null) {
         data[key] = new Array(bins.length);
         for (i = _i = 0, _ref = bins.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-          data[key][i] = _.copy(_.extend({}, schemas[key]), {
+          data[key][i] = _.copy(_.extend({}, schemas[key], {
             label: bins[i]
-          });
+          }));
         }
       } else {
         data[key] = new Array(this.modelData.length);
@@ -161,7 +172,7 @@ Loop = (function(_super) {
   };
 
   Loop.prototype.collect = function() {
-    var dayBins, doy, labels, mappings, monthBins, schemas, time, todaysBins, val, weekBins, _i, _ref, _ref1, _results,
+    var dayBins, doy, hourBins, labels, mappings, monthBins, schemas, sod, time, val, weekBins, _ref,
       _this = this;
     this.modelData = [];
     _ref = this.get('data');
@@ -172,27 +183,30 @@ Loop = (function(_super) {
         val: val
       });
     }
-    if (this.modelData.length === 0) {
-      return;
+    if (this.modelData.length !== 0) {
+      this.start = this.modelData[0];
+      this.startTime = +this.start.time;
+      this.start = this.start.val;
+    } else {
+      this.startTime = +new Date();
     }
-    this.start = this.modelData[0];
-    this.startTime = +this.start.time;
-    this.start = this.start.val;
     if (this.modelData.length > 1) {
       this.end = _.last(this.modelData);
       this.endTime = +this.end.time;
       this.end = this.end.val;
     }
-    todaysBins = (function() {
-      _results = [];
-      for (var _i = 0, _ref1 = moment().hours(); 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; 0 <= _ref1 ? _i++ : _i--){ _results.push(_i); }
-      return _results;
-    }).apply(this);
+    hourBins = d3.range(24);
+    this.hoursReset = this.rangeReset('hours');
     dayBins = this.createBins('days');
     weekBins = this.createBins('weeks');
     monthBins = this.createBins('months');
     schemas = {
       today: {
+        by: 'time',
+        points: [],
+        sum: 0
+      },
+      hours: {
         by: 'hour',
         points: [],
         sum: 0
@@ -219,33 +233,51 @@ Loop = (function(_super) {
       }
       return +moment(point).format("DDD");
     };
+    sod = +moment().sod();
     mappings = {
-      vals: function(p) {
-        return p.val;
-      },
       today: function(p) {
-        if (doy(+p.time) !== doy()) {
+        time = +p.time;
+        if (doy(time) !== doy()) {
           return '#!@*';
         }
-        return +moment(+p.time).hours();
+        return sod;
+      },
+      hours: function(p) {
+        return +_this.resetRange(p, _this.hoursReset);
       },
       days: function(p) {
-        return +_this.resetByRange(p, _this.daysReset);
+        return +_this.resetRange(p, _this.daysReset);
       },
       weeks: function(p) {
-        return +_this.resetByRange(p, _this.weeksReset);
+        return +_this.resetRange(p, _this.weeksReset);
       },
       months: function(p) {
-        return +_this.resetByRange(p, _this.monthsReset);
+        return +_this.resetRange(p, _this.monthsReset);
       }
     };
     labels = {
-      today: todaysBins,
+      today: [+moment().sod()],
+      hours: hourBins,
       days: dayBins,
       weeks: weekBins,
       months: monthBins
     };
     return this.latestData = this.migrate(mappings, schemas, labels);
+  };
+
+  Loop.prototype.collectTotals = function(data, schemappings) {
+    var bin, index, mapping, prop, val, _i, _ref;
+    for (index = _i = 0, _ref = data.length; 0 <= _ref ? _i < _ref : _i > _ref; index = 0 <= _ref ? ++_i : --_i) {
+      bin = data[index];
+      for (prop in schemappings) {
+        mapping = schemappings[prop];
+        val = mapping(bin, index, data);
+        if (val != null) {
+          bin[prop] = val;
+        }
+      }
+    }
+    return data;
   };
 
   return Loop;

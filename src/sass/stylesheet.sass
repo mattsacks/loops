@@ -1,9 +1,9 @@
-@import '_mixins'
-@import '_reset'
-@import '_media'
-@import '_skeleton'
-@import '_fonts'
-@import '_animations'
+@import 'mixins'
+@import 'reset'
+@import 'media'
+@import 'skeleton'
+@import 'fonts'
+@import 'animations'
 
 body
   background-color: #424241
@@ -24,9 +24,12 @@ body
         max-height: 460px !important
 
     #loop
-      #lighting, #current-totals
+      #lighting, #current-totals, #expanded-views
         +transition-duration(0.15s)
         opacity: 1
+
+      #current-totals, #expanded-views
+        z-index: 3
 
       #amount
         +transition-duration(0.2s)
@@ -34,6 +37,11 @@ body
         +transform(translate3d(0,0,0))
         bottom: 0px
 
+    #loop-graph
+      opacity: 1
+
+      > *
+        opacity: 1
 
     #delete
       +transition-delay(0.2s)
@@ -170,6 +178,7 @@ h1.title
       
 // the individual loop
 #loop
+  +user-select(none)
   color: rgb(240,240,240)
 
   #lighting
@@ -204,24 +213,35 @@ h1.title
 
   #current-totals
     +transition(opacity 0.1s linear)
-    margin-top: 10px
     opacity: 0
     position: absolute
     width: 100%
+    border-bottom: 1px solid #3D3D3D
 
     .current
+      box-sizing: border-box
       display: inline-block
       font-size: 0
       text-align: center
+      padding: 4px 0 16px
 
       +respond-to(desktop)
         width: 33%
       +respond-to(handheld)
-        width: 32%
+        width: 32.6%  // =(
+
+      &.active // when this is the current view showing
+        span
+          border-radius: 9px
+          border: 1px solid #F2F2F2
+
+      &:active
+        background: black
 
       h3
         font-family: "PT Sans Bold"
         font-weight: normal
+        text-shadow: 0px 0px 0 rgba(255,255,255,0.7)
         +respond-to(desktop)
           font-size: 60px
         +respond-to(handheld)
@@ -229,9 +249,42 @@ h1.title
 
       span
         font-family: "LatoLight"
+        text-shadow: 0px 0px 0 rgba(255,255,255,0.7)
         font-weight: normal
         font-size: 13px
 
+        &.active
+          border: 1px solid rgba(237, 237, 236, 0.85)
+          border-radius: 9px
+          padding: 1px 4px
+
+  #expanded-views
+    +transition(opacity 0.2s linear)
+    opacity: 0
+    position: absolute
+    left: 0
+    width: 100%
+
+    +respond-to(desktop)
+      top: 210px
+    +respond-to(handheld)
+      top: 150px
+
+    .view
+      font-family: "LatoBold"
+      cursor: pointer
+      box-sizing: border-box
+      padding: 20px 0
+      display: inline-block
+      text-align: center
+      text-transform: uppercase
+      width: 49%
+
+      +respond-to(handheld)
+        font-size: 14px
+
+      &:active // FIXME
+        background: black
 
 // delete button on showing a loop
 #delete
@@ -289,6 +342,34 @@ h1.title
       font-size: 11px
       padding: 18px 7px
       width: 60px
+
+// the time series graph
+svg#loop-graph
+  +transition(opacity 0.2s linear)
+  opacity: 0
+  box-sizing: border-box
+  position: absolute
+  width: 100%
+
+  +respond-to(desktop)
+    height: 300px
+    top: 200px
+  +respond-to(handheld)
+    height: 160px
+    top: 170px
+
+  > *
+    +transition(opacity 0.2s linear)
+    opacity: 0
+
+  .tick
+    font-family: "PT Sans"
+    fill: #EDEDEC
+    font-size: 12px
+    text-anchor: middle
+
+  .point
+    fill: blue
 
 // the dudes at the bottom, - the glowy gate and +
 #loop-buttons

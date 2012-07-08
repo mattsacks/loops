@@ -34,16 +34,22 @@ LoopView = (function(_super) {
       menu: this.options.menuTemplate
     };
     this.element = this.$el;
-    return this.els = {
+    this.els = {
       "delete": $('#delete'),
       menu: $('#loop-menu'),
       buttons: $('#loop-buttons')
     };
+    return this.expandedConfig = {
+      'day': ['today', 'hour', 'day'],
+      'week': ['thisWeek', 'week'],
+      'month': ['month']
+    };
   };
 
   LoopView.prototype.attach = function() {
-    var run, selector, _ref,
+    var run, selector, thiz, _ref,
       _this = this;
+    thiz = this;
     _.bindAll(this, 'edit', 'mod');
     this.clickEvent = window.mobile === true ? "tap" : "click";
     this.buttonEvents = {
@@ -65,6 +71,17 @@ LoopView = (function(_super) {
       run = _ref[selector];
       this.els.buttons.on(this.clickEvent, selector, _.bind.apply(_, [this[run.method], this].concat(__slice.call(run.args))));
     }
+    this.element.on(this.clickEvent, '.view', _.bind(this.viewChange, this));
+    this.element.on(this.clickEvent, '.current', function(e) {
+      var index, range;
+      index = thiz.els.currents.indexOf(this);
+      range = _.keys(thiz.expandedConfig)[index];
+      thiz.model.set({
+        range: range,
+        period: thiz.expandedConfig[range][0]
+      });
+      return thiz.render();
+    });
     this.els["delete"].on(this.clickEvent, _.bind(this.menu, this, 'delete', ''));
     return $(document).on(this.clickEvent, "body.menu", function(e) {
       var $body, el, id, operation, _base, _name;
@@ -154,32 +171,78 @@ LoopView = (function(_super) {
     return this.menuClass = '';
   };
 
+  LoopView.prototype.viewChange = function(e) {
+    var view;
+    view = e.target.innerHTML;
+    return this.trigger('viewChange', this.model.set('period', view));
+  };
+
+  LoopView.prototype.getModelData = function() {
+    return this.latestModelData = this.model.collect();
+  };
+
+  LoopView.prototype.getCurrentData = function() {
+    var current, data, interesting, todaysData;
+    data = this.latestModelData || this.getModelData();
+    interesting = [data.weeks, data.months];
+    current = _.map(interesting, function(x) {
+      return _.last(x);
+    });
+    todaysData = {
+      sum: _.reduce(data.today, (function(a, b) {
+        return a + b.sum;
+      }), 0),
+      headline: 'Today',
+      by: 'today'
+    };
+    data.thisWeek = this.model.migrate({
+      thisWeek: function(p) {
+        return moment(+p.time).day();
+      }
+    }, {
+      thisWeek: {
+        by: 'thisWeek',
+        points: [],
+        sum: 0
+      }
+    }, {
+      thisWeek: _.range(7)
+    }, _.last(data.weeks)).thisWeek;
+    return _.flatten([todaysData, current]);
+  };
+
   LoopView.prototype.render = function(template, model) {
     if (template == null) {
       template = this.templates.loop;
     }
     this.model = model != null ? model : this.model;
-    debugger;
     if (!(this.helpers != null)) {
       this.helpers = this.defineHelpers();
     }
     if (this.model.get('amount') !== 0) {
       this.menu('save', 'mod');
     }
-    this.latestTemplateData = _.extend({}, this.helpers, this.model.attributes);
+    this.latestTemplateData = _.extend({
+      modelData: this.getModelData(),
+      currentData: this.getCurrentData()
+    }, this.helpers, this.model.attributes);
     this.element.html(Mustache.render(template, this.latestTemplateData));
     this.postRender();
-    return this.trigger('render', this, model);
+    return this.trigger('render', this, {
+      model: this.model
+    });
   };
 
   LoopView.prototype.postRender = function() {
     return _.extend(this.els, {
-      amount: this.element.find('#amount')
+      amount: this.element.find('#amount'),
+      currents: this.element.find('.current')
     });
   };
 
-  LoopView.prototype.restore = function(model) {
+  LoopView.prototype.restore = function(model, expandedDetail) {
     this.model = model;
+    this.expandedDetail = expandedDetail;
     return this.trigger('restore', this.model);
   };
 
@@ -203,32 +266,35 @@ LoopView = (function(_super) {
         save: "Save"
       },
       currents: function() {
-        var collection, current, data, interesting, _i, _len;
-        data = _this.model.collect();
-        if (!(data != null)) {
-          return;
-        }
-        interesting = [data.today, data.weeks, data.months];
-        current = _.map(interesting, function(x) {
-          return _.last(x);
-        });
-        for (_i = 0, _len = current.length; _i < _len; _i++) {
-          collection = current[_i];
-          collection.headline = (function() {
+        var collection, _i, _len, _ref;
+        _ref = this.currentData;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          collection = _ref[_i];
+          collection.headline || (collection.headline = (function() {
             switch (collection.by) {
-              case 'hour':
-                return 'Today';
               case 'week':
                 return 'This Week';
               case 'month':
                 return 'This Month';
             }
-          })();
+          })());
         }
-        return current;
+        return this.currentData;
+      },
+      active: function() {
+        var val;
+        val = /[\w+\s\w+]$/.test('' + this) ? thiz.model.get('period') === this.concat() : thiz.model.get('range') === this.by;
+        if (val === true) {
+          return 'active';
+        } else {
+          return '';
+        }
       },
       amount: function() {
         return _this.model.attributes.amount || 0;
+      },
+      views: function() {
+        return _this.expandedConfig[_this.model.get('range')];
       }
     };
   };

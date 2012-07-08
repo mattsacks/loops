@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 1340944006
+# 1341763342
 
 index.html
 styles/stylesheet.css
@@ -8,6 +8,7 @@ js/lib/underscore-min.js
 js/lib/backbone-min.js
 js/lib/backbone-localstorage.js
 js/lib/hogan-2.0.0.js
+js/lib/d3.v2.min.js
 js/loop.js
 js/loopView.js
 js/loopsView.js

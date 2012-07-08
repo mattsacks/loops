@@ -127,28 +127,28 @@ class LoopsView extends Backbone.View
     $el = $(element)
     prev = element.previousElementSibling
     next = element.nextElementSibling
+    transform = browser.flag + "transform" # include prefix
 
     if $el.hasClass('active') # close viewing a loop
-      $el.removeClass('active').css '-webkit-transform',
-        'translate3d(0,-' + $el.offset().top + 'px,0)'
-      $el.siblings().css '-webkit-transform', 'translate3d(0,0,0)'
-      @els.portability.css '-webkit-transform', 'translate3d(0,0,0)'
+      $el.removeClass('active').css transform, 'translate3d(0,-' + $el.offset().top + 'px,0)'
+      $el.siblings().css transform, 'translate3d(0,0,0)'
+      @els.portability.css transform, 'translate3d(0,0,0)'
 
       return false # the view is closed
     else # open a loop!
-      $el.addClass('active').css '-webkit-transform',
+      $el.addClass('active').css transform,
         'translate3d(0,-' + $el.offset().top + 'px,0)'
 
       while prev? # move previous siblings over the top by index
         $prev = $(prev)
         top = $prev.offset().top + $prev.height()
-        $prev.css '-webkit-transform', 'translate3d(0,-' + top + 'px,0)'
+        $prev.css transform, 'translate3d(0,-' + top + 'px,0)'
         prev = prev.previousElementSibling
       while next? # move siblings past the bottom
-        $(next).css '-webkit-transform', "translate3d(0,#{window.innerHeight}px,0)"
+        $(next).css transform, "translate3d(0,#{window.innerHeight}px,0)"
         next = next.nextElementSibling
 
-      @els.portability.css '-webkit-transform', "translate3d(0,#{window.innerHeight}px,0)"
+      @els.portability.css transform, "translate3d(0,#{window.innerHeight}px,0)"
       return true # the view is now open
 
   # called on tapping the name of a loop in any view

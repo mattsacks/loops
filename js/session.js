@@ -41,33 +41,40 @@ Session = (function(_super) {
     }
     this.model = this.get('model');
     if (this.model) {
-      this.view.restore(this.view.collection.get(this.model.id));
+      this.view.restore(this.view.collection.get(this.model.id), this.get('graph'));
     } else {
       this.view.restore();
     }
   }
 
   Session.prototype.viewEvents = {
-    'render': function(view, model) {
-      var viewName;
-      viewName = this.viewNames[this.views.indexOf(view)];
+    'render': function(view, data) {
+      var sync, viewName,
+        _this = this;
+      this.view = view;
+      viewName = this.viewNames[this.views.indexOf(this.view)];
       this.sync.apply(this, [
         'update', viewName, {
           id: 'view'
         }
       ]);
-      if (model != null) {
-        return this.sync.apply(this, [
-          'update', model, {
-            id: 'model'
-          }
-        ]);
+      sync = function(op, data) {
+        var datum, key, _results;
+        _results = [];
+        for (key in data) {
+          datum = data[key];
+          _results.push(_this.sync.apply(_this, [
+            op, datum, {
+              id: key
+            }
+          ]));
+        }
+        return _results;
+      };
+      if (data != null) {
+        return sync('update', data);
       } else {
-        return this.sync.apply(this, [
-          'delete', model, {
-            id: 'model'
-          }
-        ]);
+        return sync('delete', this.localStorage.data);
       }
     }
   };

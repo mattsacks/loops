@@ -5,11 +5,10 @@
     <title>Loops</title>
     <meta content='True' name='HandheldFriendly' />
     <meta content='320' name='MobileOptimized' />
-    <meta content='width=device-width; initial-scale=1.0; maximum-scale=1.0;' name='viewport' />
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0' name='viewport' />
     <meta content='yes' name='apple-mobile-web-app-capable' />
     <meta content='black' name='apple-mobile-web-app-status-bar-style' />
-    <link href='icon-hi9/icon-hi9@2x.png' rel='apple-touch-icon-precomposed' sizes='114x114' />
-    <link href='favicon-hi.ico' rel='shortcut icon' type='images/x-icon' />
+    <link href='icon-hi9@2x.png' rel='apple-touch-icon-precomposed' sizes='114x114' />
     <link href='styles/stylesheet.css' rel='stylesheet' />
     <script type='text/javascript'>
       //<![CDATA[
@@ -37,12 +36,18 @@
           {{#currents}}
             <div class="current">
               <h3>{{sum}}</h3>
-              <span>{{headline}}</span>
+              <span class="{{active}}">{{headline}}</span>
             </div>
           {{/currents}}
         </div>
+        <div id="expanded-views">
+          {{#views}}
+            <div class="view {{active}}">{{.}}</div>
+          {{/views}}
+        </div>
         <div id="amount">{{amount}}</div>
       </script>
+      <svg id='loop-graph'></svg>
       <div id='loop-buttons'>
         <div class='button' id='subtract'>–</div>
         <div id='amount-space'>&nbsp;</div>
@@ -72,10 +77,12 @@
     <script src='js/lib/backbone-localstorage.js'></script>
     <script src='js/lib/mustache.js'></script>
     <script src='js/lib/moment.min.js'></script>
+    <script src='js/lib/d3.v2.min.js'></script>
     <script src='js/session.js'></script>
     <script src='js/loop.js'></script>
     <script src='js/loopsView.js'></script>
     <script src='js/loopView.js'></script>
+    <script src='js/graph.js'></script>
     <script src='js/index.js'></script>
   </body>
 </html>

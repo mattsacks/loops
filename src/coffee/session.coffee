@@ -3,29 +3,38 @@ class Session extends Backbone.Model
     super(@localStorage.data)
     @save()
 
+    # attach hooks into the 'render' event for each registered view passed in
+    # to the constructor
     window[view].on(event, run, this) for event, run of @viewEvents for view in @viewNames
-    #@on(event, run) for event, run of @events
 
-    @view  = window[@get('view')]
-    if !@view? #default
-      view = @viewNames[0]
+    @view  = window[@get('view')] # collect the current view from localStorage
+
+    if !@view? # show the default view if none was previously found
+      view = @viewNames[0] # this should be the loopsView, the first argument
       @sync.apply(this, ['create', view, id: 'view'])
       @set('view', @view = window[view]) # set @view while setting it
 
-    @views = []
+    @views = [] # cache the instantiated objects of the registered viewNames
     @views.push(window[i]) for i in @viewNames
 
-    @model = @get('model')
-    if @model
-      @view.restore(@view.collection.get(@model.id))
-    else @view.restore()
+    @model = @get('model') # set the model if one was found from the data
+    if @model # restore that model's view
+      @view.restore(@view.collection.get(@model.id), @get('graph'))
+    else @view.restore() # otherwise, just call restore on the set (or default) @view
 
+  # events fired on each registered view in @views from @viewNames passed in
   viewEvents:
-    'render': (view, model) ->
-      viewName = @viewNames[@views.indexOf(view)]
+    # on the 'render' event for each view
+    'render': (@view, data) ->
+      viewName = @viewNames[@views.indexOf(@view)]
+
+      # update the viewName in storage as 'view'
       @sync.apply(this, ['update', viewName, id: 'view'])
-      if model? then @sync.apply(this, ['update', model, id: 'model'])
-      else @sync.apply(this, ['delete', model, id: 'model'])
+
+      # update the data if present, otherwise delete it
+      sync = (op, data) =>
+        @sync.apply(this, [op, datum, id: key]) for key,datum of data
+      if data? then sync('update', data) else sync('delete', @localStorage.data)
 
   localStorage: new Store('loops-session')
   sync: Backbone.sync.store

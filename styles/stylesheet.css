@@ -33,7 +33,7 @@ body:after {
     content: "tablet-large";
   }
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   body:after {
     content: "desktop";
   }
@@ -351,7 +351,7 @@ body {
 body.show {
   opacity: 1;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   body.viewing .container {
     padding-bottom: 8px;
   }
@@ -362,13 +362,16 @@ body.show {
     max-height: 460px !important;
   }
 }
-body.viewing #loop #lighting, body.viewing #loop #current-totals {
+body.viewing #loop #lighting, body.viewing #loop #current-totals, body.viewing #loop #expanded-views {
   -webkit-transition-duration: 0.15s;
   -moz-transition-duration: 0.15s;
   -ms-transition-duration: 0.15s;
   -o-transition-duration: 0.15s;
   transition-duration: 0.15s;
   opacity: 1;
+}
+body.viewing #loop #current-totals, body.viewing #loop #expanded-views {
+  z-index: 3;
 }
 body.viewing #loop #amount {
   -webkit-transition-duration: 0.2s;
@@ -387,6 +390,12 @@ body.viewing #loop #amount {
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   bottom: 0px;
+}
+body.viewing #loop-graph {
+  opacity: 1;
+}
+body.viewing #loop-graph > * {
+  opacity: 1;
 }
 body.viewing #delete {
   -webkit-transition-delay: 0.2s;
@@ -457,7 +466,7 @@ body.menu #loop-menu {
   overflow-x: hidden;
   overflow-y: hidden;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   .container {
     min-height: 780px;
   }
@@ -491,7 +500,7 @@ body.menu #loop-menu {
   position: relative;
   z-index: 2;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #titlebar .button {
     font-size: 50px;
     padding: 15px 50px;
@@ -522,7 +531,7 @@ h1.title {
   text-align: center;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   h1.title {
     box-shadow: 0 -1px 10px rgba(240, 240, 240, 0.24);
     font-size: 64px;
@@ -559,7 +568,7 @@ h1.title {
   display: block;
   font-family: "Open Sans Semibold";
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #loops li {
     font-size: 18px;
     padding-top: 33px;
@@ -607,6 +616,11 @@ h1.title {
 }
 
 #loop {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
   color: #f0f0f0;
 }
 #loop #lighting {
@@ -643,7 +657,7 @@ h1.title {
   font-family: "PT Sans";
   text-shadow: 0 none;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #loop #amount {
     -webkit-transform: translate3d(0px, 180px, 0);
     -moz-transform: translate3d(0px, 180px, 0);
@@ -670,31 +684,41 @@ h1.title {
   -ms-transition: opacity 0.1s linear;
   -o-transition: opacity 0.1s linear;
   transition: opacity 0.1s linear;
-  margin-top: 10px;
   opacity: 0;
   position: absolute;
   width: 100%;
+  border-bottom: 1px solid #3d3d3d;
 }
 #loop #current-totals .current {
+  box-sizing: border-box;
   display: inline-block;
   font-size: 0;
   text-align: center;
+  padding: 4px 0 16px;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #loop #current-totals .current {
     width: 33%;
   }
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   #loop #current-totals .current {
-    width: 32%;
+    width: 32.6%;
   }
+}
+#loop #current-totals .current.active span {
+  border-radius: 9px;
+  border: 1px solid #f2f2f2;
+}
+#loop #current-totals .current:active {
+  background: black;
 }
 #loop #current-totals .current h3 {
   font-family: "PT Sans Bold";
   font-weight: normal;
+  text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.7);
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #loop #current-totals .current h3 {
     font-size: 60px;
   }
@@ -706,8 +730,53 @@ h1.title {
 }
 #loop #current-totals .current span {
   font-family: "LatoLight";
+  text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.7);
   font-weight: normal;
   font-size: 13px;
+}
+#loop #current-totals .current span.active {
+  border: 1px solid rgba(237, 237, 236, 0.85);
+  border-radius: 9px;
+  padding: 1px 4px;
+}
+#loop #expanded-views {
+  -webkit-transition: opacity 0.2s linear;
+  -moz-transition: opacity 0.2s linear;
+  -ms-transition: opacity 0.2s linear;
+  -o-transition: opacity 0.2s linear;
+  transition: opacity 0.2s linear;
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+@media only screen and (min-width: 600px) {
+  #loop #expanded-views {
+    top: 210px;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #loop #expanded-views {
+    top: 150px;
+  }
+}
+#loop #expanded-views .view {
+  font-family: "LatoBold";
+  cursor: pointer;
+  box-sizing: border-box;
+  padding: 20px 0;
+  display: inline-block;
+  text-align: center;
+  text-transform: uppercase;
+  width: 49%;
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #loop #expanded-views .view {
+    font-size: 14px;
+  }
+}
+#loop #expanded-views .view:active {
+  background: black;
 }
 
 #delete {
@@ -731,7 +800,7 @@ h1.title {
   top: 0px;
   z-index: 3;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #delete {
     -webkit-transform: translate3d(250px, 0, 0);
     -moz-transform: translate3d(250px, 0, 0);
@@ -808,6 +877,47 @@ h1.title {
   }
 }
 
+svg#loop-graph {
+  -webkit-transition: opacity 0.2s linear;
+  -moz-transition: opacity 0.2s linear;
+  -ms-transition: opacity 0.2s linear;
+  -o-transition: opacity 0.2s linear;
+  transition: opacity 0.2s linear;
+  opacity: 0;
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+}
+@media only screen and (min-width: 600px) {
+  svg#loop-graph {
+    height: 300px;
+    top: 200px;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  svg#loop-graph {
+    height: 160px;
+    top: 170px;
+  }
+}
+svg#loop-graph > * {
+  -webkit-transition: opacity 0.2s linear;
+  -moz-transition: opacity 0.2s linear;
+  -ms-transition: opacity 0.2s linear;
+  -o-transition: opacity 0.2s linear;
+  transition: opacity 0.2s linear;
+  opacity: 0;
+}
+svg#loop-graph .tick {
+  font-family: "PT Sans";
+  fill: #ededec;
+  font-size: 12px;
+  text-anchor: middle;
+}
+svg#loop-graph .point {
+  fill: blue;
+}
+
 #loop-buttons {
   -webkit-transition: none 0.2s ease-out;
   -moz-transition: none 0.2s ease-out;
@@ -824,7 +934,7 @@ h1.title {
   width: 100%;
   z-index: 3;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #loop-buttons {
     -webkit-transform: translate3d(0px, 320px, 0);
     -moz-transform: translate3d(0px, 320px, 0);
@@ -876,7 +986,7 @@ h1.title {
   margin-left: -1px;
   width: 48%;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #loop-buttons #amount-space {
     border-top-left-radius: 25px;
     border-top-right-radius: 25px;
@@ -905,7 +1015,7 @@ h1.title {
   position: relative;
   padding: 0;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #loop-buttons #add, #loop-buttons #subtract {
     font-size: 80px;
     margin-top: 46px;
@@ -940,7 +1050,7 @@ h1.title {
   margin: 0 auto;
   padding-bottom: 20px;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #data-buttons {
     width: 410px;
   }
@@ -968,7 +1078,7 @@ h1.title {
   text-align: center;
   text-transform: uppercase;
 }
-@media only screen and (min-width: 1224px) {
+@media only screen and (min-width: 600px) {
   #data-buttons .button {
     font-size: 25px;
     padding: 3px 0;

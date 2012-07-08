@@ -6,12 +6,11 @@
     %title Loops
     %meta{:name => "HandheldFriendly", :content => "True"}
     %meta{:name => "MobileOptimized", :content => "320"}
-    %meta{:name => "viewport", :content => "width=device-width; initial-scale=1.0; maximum-scale=1.0;"}
+    %meta{:name => "viewport", :content => "width=device-width, initial-scale=1.0, maximum-scale=1.0"}
     %meta{:name => "apple-mobile-web-app-capable", :content => "yes"}
     %meta{:name => "apple-mobile-web-app-status-bar-style", :content =>"black"}
 
-    %link{:rel => "apple-touch-icon-precomposed", :sizes => "114x114", :href => "icon-hi9/icon-hi9@2x.png"}
-    %link{:rel => 'shortcut icon', :href => 'favicon-hi.ico', :type => 'images/x-icon'}
+    %link{:rel => "apple-touch-icon-precomposed", :sizes => "114x114", :href => "icon-hi9@2x.png"}
     %link{:rel => 'stylesheet', :href => 'styles/stylesheet.css'}
     -# livereload
     :javascript
@@ -39,16 +38,22 @@
             {{#currents}}
               <div class="current">
                 <h3>{{sum}}</h3>
-                <span>{{headline}}</span>
+                <span class="{{active}}">{{headline}}</span>
               </div>
             {{/currents}}
           </div>
+          <div id="expanded-views">
+            {{#views}}
+              <div class="view {{active}}">{{.}}</div>
+            {{/views}}
+          </div>
           <div id="amount">{{amount}}</div>
+      %svg#loop-graph
       #loop-buttons
         #subtract.button –
         #amount-space &nbsp;
         #add.button +
-          
+
       %ul#loops
       %script{:id => "loop-template", :type => "text/x-template"}
         :plain
@@ -73,9 +78,11 @@
     %script{:src => 'js/lib/backbone-localstorage.js'}=""
     %script{:src => 'js/lib/mustache.js'}=""
     %script{:src => 'js/lib/moment.min.js'}=""
+    %script{:src => 'js/lib/d3.v2.min.js'}=""
 
     %script{:src => 'js/session.js'}=""
     %script{:src => 'js/loop.js'}=""
     %script{:src => 'js/loopsView.js'}=""
     %script{:src => 'js/loopView.js'}=""
+    %script{:src => 'js/graph.js'}=""
     %script{:src => 'js/index.js'}=""

@@ -3,13 +3,7 @@ var Browser;
 
 (function(moment) {
   return moment.fn.week = function(week) {
-    var doy, mod;
-    mod = moment().date(1).month(0).day() % 7;
-    if (!(week != null)) {
-      return Math.floor((+this.format("DDD") + mod) / 7);
-    }
-    doy = (this.day() - mod) + ((week - 1) * 7);
-    return this.date(1).month(0).add('days', doy);
+    return +this.format("w");
   };
 })(moment);
 
@@ -51,6 +45,33 @@ Browser = (function() {
       query: !!document.querySelector,
       json: !!window.JSON
     };
+    this.flag = (function() {
+      if (this.name === 'unknown') {
+        switch (this.Platform.name) {
+          case 'ios':
+            return '-webkit-';
+          case 'android':
+            return '-webkit-';
+          case 'webos':
+            return '-webkit-';
+        }
+      } else {
+        switch (this.name) {
+          case 'chrome':
+            return '-webkit-';
+          case 'safari':
+            return '-webkit-';
+          case 'firefox':
+            return '-moz-';
+          case 'ie':
+            return '-ms-';
+          case 'opera':
+            return '-o-';
+          default:
+            return '';
+        }
+      }
+    }).call(this);
   }
 
   return Browser;
@@ -64,6 +85,9 @@ $(function() {
   window.loops = new Loops();
   window.loopView = new LoopView({
     collection: loops
+  });
+  window.timeseries = new TimeSeries({
+    view: loopView
   });
   window.loopsView = new LoopsView({
     collection: loops,
