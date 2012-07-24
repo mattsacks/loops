@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 1342981134
+# 1343137300
 
 index.html
 styles/stylesheet.css
@@ -15,6 +15,7 @@ js/loop.js
 js/loopView.js
 js/loopsView.js
 js/session.js
+js/music.js
 js/index.js
 fonts/Lato-Light.ttf
 fonts/Lato-Regular.ttf

@@ -6,7 +6,7 @@ module.exports = function(grunt) {
         dest: 'deps.js'
       },
       source: {
-        src: ['js/loop.js', 'js/loopView.js', 'js/graph.js', 'js/loopsView.js', 'js/session.js', 'js/index.js'],
+        src: ['js/loop.js', 'js/loopView.js', 'js/graph.js', 'js/loopsView.js', 'js/session.js', 'js/music.js', 'js/index.js'],
         dest: 'src.js'
       }
     },
