@@ -49,9 +49,9 @@ IP:port is on your iOS device (or browser).
   Nope
 
 * _How about export/import?_  
-  Workin on it
+  Will do something like anonymous posting to private gists
 
-* _iPad support?_
+* _Better iPad support?_  
   Yeah, later
 
 * _What about Android support?_  
@@ -62,7 +62,7 @@ IP:port is on your iOS device (or browser).
   the data should be structured. Set it with `localStorage.setItem`
 
 * _Why is the box glowing?_  
-  Because I thought it was cool and took [no code](https://github.com/mattsa/loops/blob/master/src/sass/_animations.scss)
+  Because I thought it was cool and took [no code](https://github.com/mattsa/loops/blob/master/src/sass/_animations.sass)
 
 * _I don't like the music_  
   That sucks
