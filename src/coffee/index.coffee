@@ -15,7 +15,8 @@ do (_) ->
       return obj
 (_)
 
-
+Math.getRandomInt = (min, max) ->
+  Math.floor(Math.random() * (max - min + 1)) + min
 
 class Browser
   constructor: ->
@@ -54,6 +55,8 @@ class Browser
 $ -> # document.ready
   # window.session = new Session(data.session)
   window.browser  = new Browser()
+  # cache original height before render
+  window.ogHeight   = window.innerHeight
   window.platform = browser.Platform.name
   window.mobile =
     if platform is 'ios' or platform is 'android' then true
@@ -61,12 +64,19 @@ $ -> # document.ready
 
   window.loops      = new Loops()
   window.loopView   = new LoopView(collection: loops)
-  window.timeseries = new TimeSeries(view: loopView)
+  window.graph      = new Graph(view: loopView)
   window.loopsView  = new LoopsView
     collection: loops
     subView:    loopView
 
   window.session  = new Session('loopsView', 'loopView')
+
+  if window.navigator.standalone is false
+    $(document.body).addClass('to-install')
+
+  # music
+  song = session.newSong()
+  $('#music').attr('href', music[song])
 
   $(document.body).addClass('show')
 

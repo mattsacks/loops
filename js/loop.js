@@ -128,8 +128,11 @@ Loop = (function(_super) {
     return bins;
   };
 
-  Loop.prototype.migrate = function(mappings, schemas, labels) {
-    var bins, data, i, index, key, mapping, x, _i, _j, _len, _ref, _ref1;
+  Loop.prototype.migrate = function(mappings, schemas, labels, modelData) {
+    var bins, data, i, index, key, mapping, x, _i, _j, _len, _ref;
+    if (modelData == null) {
+      modelData = this.modelData;
+    }
     if (arguments.length === 0) {
       return;
     }
@@ -148,9 +151,8 @@ Loop = (function(_super) {
         data[key] = new Array(this.modelData.length);
       }
     }
-    _ref1 = this.modelData;
-    for (i = _j = 0, _len = _ref1.length; _j < _len; i = ++_j) {
-      x = _ref1[i];
+    for (i = _j = 0, _len = modelData.length; _j < _len; i = ++_j) {
+      x = modelData[i];
       for (key in mappings) {
         mapping = mappings[key];
         bins = labels[key];
@@ -191,9 +193,7 @@ Loop = (function(_super) {
       this.startTime = +new Date();
     }
     if (this.modelData.length > 1) {
-      this.end = _.last(this.modelData);
-      this.endTime = +this.end.time;
-      this.end = this.end.val;
+      this.endTime = +new Date();
     }
     hourBins = d3.range(24);
     this.hoursReset = this.rangeReset('hours');
@@ -202,27 +202,27 @@ Loop = (function(_super) {
     monthBins = this.createBins('months');
     schemas = {
       today: {
-        by: 'time',
+        by: 'today',
         points: [],
         sum: 0
       },
       hours: {
-        by: 'hour',
+        by: 'by hour',
         points: [],
         sum: 0
       },
       days: {
-        by: 'day',
+        by: 'by day',
         points: [],
         sum: 0
       },
       weeks: {
-        by: 'week',
+        by: 'by week',
         points: [],
         sum: 0
       },
       months: {
-        by: 'month',
+        by: 'by month',
         points: [],
         sum: 0
       }

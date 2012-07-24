@@ -1,7 +1,6 @@
 class Session extends Backbone.Model
   constructor: (@viewNames...) ->
     super(@localStorage.data)
-    @save()
 
     # attach hooks into the 'render' event for each registered view passed in
     # to the constructor
@@ -36,6 +35,18 @@ class Session extends Backbone.Model
         @sync.apply(this, [op, datum, id: key]) for key,datum of data
       if data? then sync('update', data) else sync('delete', @localStorage.data)
 
+  newSong: ->
+    max    = music.length - 1
+    ogSong = @get('song') or Math.getRandomInt(0, max)
+    song   = ogSong
+    song   = Math.getRandomInt(0, max) while song is ogSong
+    return @saveSong(song)
+
+  # song is an integer different from the last one saved
+  saveSong: (song) ->
+    @set('song', song)
+    @sync.apply(this, ['update', song, id: 'song'])
+    return song
+
   localStorage: new Store('loops-session')
   sync: Backbone.sync.store
-  save: -> @localStorage.save()

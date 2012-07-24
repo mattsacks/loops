@@ -72,7 +72,7 @@ class Loop extends Backbone.Model
   # labels: key:  data key, value: an array of bins to which each value will be
   #                         the label of the bin. ex: a numerical date for each
   #                         day of the week or a category name
-  migrate: (mappings, schemas, labels) ->
+  migrate: (mappings, schemas, labels, modelData = @modelData) ->
     return if arguments.length is 0
 
     data = {}
@@ -90,7 +90,7 @@ class Loop extends Backbone.Model
         data[key] = new Array(@modelData.length)
 
     # each data point saved for this loop
-    for x,i in @modelData
+    for x,i in modelData
       for key, mapping of mappings
         bins = labels[key]
         if labels[key]? and schemas[key]?
@@ -113,9 +113,7 @@ class Loop extends Backbone.Model
       @startTime = +@start.time; @start = @start.val
     else @startTime = +new Date()
 
-    if @modelData.length > 1
-      @end     = _.last(@modelData)
-      @endTime = +@end.time; @end = @end.val
+    if @modelData.length > 1 then @endTime = +new Date()
 
     # collect data.hours as [12am, 1am, 2am...11pm]
     hourBins    = d3.range(24)
@@ -128,11 +126,11 @@ class Loop extends Backbone.Model
     monthBins  = @createBins('months')
 
     schemas =
-      today:    { by: 'time',  points: [], sum: 0 }
-      hours:    { by: 'hour',  points: [], sum: 0 }
-      days:     { by: 'day',   points: [], sum: 0 }
-      weeks:    { by: 'week',  points: [], sum: 0 }
-      months:   { by: 'month', points: [], sum: 0 }
+      today:    { by: 'today', points: [], sum: 0 }
+      hours:    { by: 'by hour',  points: [], sum: 0 }
+      days:     { by: 'by day',   points: [], sum: 0 }
+      weeks:    { by: 'by week',  points: [], sum: 0 }
+      months:   { by: 'by month', points: [], sum: 0 }
 
     # day-of-year, default: today
     doy = (point = undefined) -> +moment(point).format("DDD")

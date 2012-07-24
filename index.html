@@ -8,7 +8,7 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0' name='viewport' />
     <meta content='yes' name='apple-mobile-web-app-capable' />
     <meta content='black' name='apple-mobile-web-app-status-bar-style' />
-    <link href='icon-hi9@2x.png' rel='apple-touch-icon-precomposed' sizes='114x114' />
+    <link href='icon-hi19.png' rel='apple-touch-icon-precomposed' sizes='114x114' />
     <link href='styles/stylesheet.css' rel='stylesheet' />
     <script type='text/javascript'>
       //<![CDATA[
@@ -18,8 +18,19 @@
   </head>
   <body>
     <div class='container'>
+      <div id='install'>
+        <h2>by matt sacks</h2>
+        <p>Select "Add to Home Screen"</p>
+        <div id='arrow'>
+          <svg height='19px' version='1.1' width='17px' xmlns='http://www.w3.org/2000/svg'>
+            <g>
+              <path d='M3,0 C3,0 3,0 4,0 L13,0 C13,0 14,0 14,0 L14,10 L16,10 C17,10 17,10 17,11 L10,18 C9,19 8,19 7,18 L0,11 C0,10 0,10 1,10 L3,10 L3,0' fill='rgb(62,62,61)' stroke-width='1' stroke='rgb(142,142,141)'></path>
+              <path d='' fill='rgb(72,72,71)' stroke-width='1' stroke='rgb(150,150,150)'></path>
+            </g>
+          </svg>
+        </div>
+      </div>
       <div id='titlebar'>
-        <div class='button' id='resume'>r</div>
         <h1 class='title column'>loops</h1>
         <div class='button' id='create'>+</div>
       </div>
@@ -40,11 +51,15 @@
             </div>
           {{/currents}}
         </div>
-        <div id="expanded-views">
-          {{#views}}
-            <div class="view {{active}}">{{.}}</div>
-          {{/views}}
-        </div>
+        <table id="expanded-views">
+          <tbody>
+            <tr>
+              {{#views}}
+                <td data-range="{{.}}" class="view {{active}}">{{rangeLabel}}</td>
+              {{/views}}
+            </tr>
+          </tbody>
+        </table>
         <div id="amount">{{amount}}</div>
       </script>
       <svg id='loop-graph'></svg>
@@ -70,6 +85,16 @@
         <div class='button' id='import'>Import</div>
         <div class='button' id='export'>Export</div>
       </div>
+      <div id='additional'>
+        <div class='link'>
+          built on
+          <a id='music'>good music</a>
+        </div>
+        <div class='link'>
+          created by
+          <a href='http://sacks.io' id='author'>matt sacks</a>
+        </div>
+      </div>
     </div>
     <script src='js/lib/zepto.min.js'></script>
     <script src='js/lib/underscore-min.js'></script>
@@ -83,6 +108,7 @@
     <script src='js/loopsView.js'></script>
     <script src='js/loopView.js'></script>
     <script src='js/graph.js'></script>
+    <script src='js/music.js'></script>
     <script src='js/index.js'></script>
   </body>
 </html>

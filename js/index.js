@@ -27,6 +27,10 @@ moment;
 _;
 
 
+Math.getRandomInt = function(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 Browser = (function() {
 
   function Browser() {
@@ -79,14 +83,16 @@ Browser = (function() {
 })();
 
 $(function() {
+  var song;
   window.browser = new Browser();
+  window.ogHeight = window.innerHeight;
   window.platform = browser.Platform.name;
   window.mobile = platform === 'ios' || platform === 'android' ? true : false;
   window.loops = new Loops();
   window.loopView = new LoopView({
     collection: loops
   });
-  window.timeseries = new TimeSeries({
+  window.graph = new Graph({
     view: loopView
   });
   window.loopsView = new LoopsView({
@@ -94,5 +100,10 @@ $(function() {
     subView: loopView
   });
   window.session = new Session('loopsView', 'loopView');
+  if (window.navigator.standalone === false) {
+    $(document.body).addClass('to-install');
+  }
+  song = session.newSong();
+  $('#music').attr('href', music[song]);
   return $(document.body).addClass('show');
 });

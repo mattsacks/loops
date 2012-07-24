@@ -1,20 +1,3 @@
-body, h1, h2, h3, h4, h5, ul {
-  margin: 0;
-}
-
-ul {
-  margin-left: 0;
-  padding-left: 0;
-}
-
-* {
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
-}
-
-.clear {
-  clear: both;
-}
-
 body:after {
   display: none;
 }
@@ -44,10 +27,21 @@ body:after {
   }
 }
 
-.clear:after {
-  content: "";
+body, h1, h2, h3, h4, h5, ul {
+  margin: 0;
+}
+
+ul {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+}
+
+.clear {
   clear: both;
-  display: table-cell;
 }
 
 @font-face {
@@ -72,17 +66,10 @@ body:after {
 }
 
 @font-face {
-  font-family: "LatoBold";
+  font-family: "LatoBla";
   font-style: normal;
   font-weight: normal;
-  src: local("Lato Bold"), local("Lato-Bold"), url("../fonts/Lato-Bold.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "LatoBlack";
-  font-style: normal;
-  font-weight: normal;
-  src: local("Lato Black"), local("Lato-Black"), url("../fonts/Lato-Black.ttf") format("truetype");
+  src: local("Lato Bla"), local("Lato-Bla"), url("../fonts/Lato-Bla.ttf") format("truetype");
 }
 
 @font-face {
@@ -348,6 +335,25 @@ body {
   min-height: 420px;
   opacity: 0;
 }
+body.to-install, body.to-install .container {
+  min-height: none;
+  height: 340px !important;
+  max-height: 340px !important;
+  overflow: hidden;
+}
+body.to-install .container > * {
+  opacity: 0;
+}
+body.to-install #install {
+  display: block;
+  opacity: 1;
+}
+body.to-install #titlebar {
+  opacity: 1;
+}
+body.to-install #titlebar #create {
+  opacity: 0;
+}
 body.show {
   opacity: 1;
 }
@@ -361,6 +367,9 @@ body.show {
     height: 460px !important;
     max-height: 460px !important;
   }
+}
+body.viewing #loops {
+  margin-bottom: 0;
 }
 body.viewing #loop #lighting, body.viewing #loop #current-totals, body.viewing #loop #expanded-views {
   -webkit-transition-duration: 0.15s;
@@ -426,6 +435,7 @@ body.viewing #loop-buttons {
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   bottom: 0px;
+  z-index: 4;
 }
 body.menu #delete {
   -webkit-transition-delay: 0s;
@@ -496,6 +506,25 @@ body.menu #loop-menu {
   text-shadow: inset -1px -1px 0px rgba(250, 250, 250, 0.5);
 }
 
+#install {
+  color: #717170;
+  display: none;
+  font-family: "LatoBla";
+  font-weight: normal;
+  position: absolute;
+  text-align: center;
+  top: 15%;
+  width: 100%;
+}
+#install h2 {
+  font-size: 13px;
+  font-weight: 100;
+  margin-bottom: 200px;
+}
+#install #arrow {
+  margin-top: 20px;
+}
+
 #titlebar {
   position: relative;
   z-index: 2;
@@ -547,9 +576,28 @@ h1.title {
 }
 
 #loops {
-  margin-bottom: 30px;
+  -webkit-transition: none 0.3s ease-out;
+  -moz-transition: none 0.3s ease-out;
+  -ms-transition: none 0.3s ease-out;
+  -o-transition: none 0.3s ease-out;
+  transition: none 0.3s ease-out;
+  -webkit-transition-property: -webkit-transform;
+  -moz-transition-property: -moz-transform;
+  -ms-transition-property: -ms-transform;
+  -o-transition-property: -o-transform;
+  transition-property: transform;
   position: relative;
   z-index: 2;
+}
+@media only screen and (min-width: 600px) {
+  #loops {
+    margin-bottom: 80px;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #loops {
+    margin-bottom: 30px;
+  }
 }
 #loops li {
   -webkit-transition: none 0.3s ease-out;
@@ -649,13 +697,14 @@ h1.title {
   -ms-transition-property: -ms-transform;
   -o-transition-property: -o-transform;
   transition-property: transform;
-  position: absolute;
   bottom: 0;
-  left: 0;
-  text-align: center;
-  width: 100%;
   font-family: "PT Sans";
+  left: 0;
+  position: absolute;
+  display: block;
+  text-align: center;
   text-shadow: 0 none;
+  width: 100%;
 }
 @media only screen and (min-width: 600px) {
   #loop #amount {
@@ -678,26 +727,58 @@ h1.title {
     font-size: 70px;
   }
 }
+#loop #amount input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  -o-appearance: none;
+  appearance: none;
+  background-color: transparent;
+  border-color: transparent;
+  border-width: 0;
+  color: #f9f9f9;
+  font-family: "PT Sans";
+  font-size: inherit;
+  outline: none;
+  position: relative;
+  text-align: center;
+}
+@media only screen and (min-width: 600px) {
+  #loop #amount input {
+    bottom: -2px;
+    width: 100%;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #loop #amount input {
+    bottom: -20px;
+    width: 50%;
+  }
+  #loop #amount input::-webkit-input-placeholder {
+    color: rgba(0, 0, 0, 0);
+  }
+}
 #loop #current-totals {
   -webkit-transition: opacity 0.1s linear;
   -moz-transition: opacity 0.1s linear;
   -ms-transition: opacity 0.1s linear;
   -o-transition: opacity 0.1s linear;
   transition: opacity 0.1s linear;
+  border-bottom: 1px solid #3d3d3d;
   opacity: 0;
   position: absolute;
   width: 100%;
-  border-bottom: 1px solid #3d3d3d;
 }
 #loop #current-totals .current {
   box-sizing: border-box;
   display: inline-block;
   font-size: 0;
-  text-align: center;
   padding: 4px 0 16px;
+  text-align: center;
 }
 @media only screen and (min-width: 600px) {
   #loop #current-totals .current {
+    cursor: pointer;
     width: 33%;
   }
 }
@@ -707,11 +788,15 @@ h1.title {
   }
 }
 #loop #current-totals .current.active span {
-  border-radius: 9px;
   border: 1px solid #f2f2f2;
+  border-radius: 9px;
 }
 #loop #current-totals .current:active {
-  background: black;
+  background-image: -o-linear-gradient(-90deg, #323131 0%, #363535 100%);
+  background-image: -moz-linear-gradient(-90deg, #323131 0%, #363535 100%);
+  background-image: -webkit-linear-gradient(-90deg, #323131 0%, #363535 100%);
+  background-image: -ms-linear-gradient(-90deg, #323131 0%, #363535 100%);
+  background-image: linear-gradient(-90deg, #323131 0%, #363535 100%);
 }
 #loop #current-totals .current h3 {
   font-family: "PT Sans Bold";
@@ -729,15 +814,36 @@ h1.title {
   }
 }
 #loop #current-totals .current span {
-  font-family: "LatoLight";
-  text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.7);
-  font-weight: normal;
   font-size: 13px;
+  font-weight: normal;
+  text-shadow: 0px 0px 0 rgba(255, 255, 255, 0.7);
+}
+@media only screen and (min-width: 600px) {
+  #loop #current-totals .current span {
+    font-family: "Lato";
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #loop #current-totals .current span {
+    font-family: "LatoLight";
+  }
 }
 #loop #current-totals .current span.active {
-  border: 1px solid rgba(237, 237, 236, 0.85);
   border-radius: 9px;
+  border-style: solid;
   padding: 1px 4px;
+  border-color: rgba(252, 252, 252, 0.85);
+}
+@media only screen and (min-width: 600px) {
+  #loop #current-totals .current span.active {
+    border-width: 1px;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #loop #current-totals .current span.active {
+    border-color: rgba(237, 237, 236, 0.85);
+    border-width: 1px;
+  }
 }
 #loop #expanded-views {
   -webkit-transition: opacity 0.2s linear;
@@ -745,38 +851,45 @@ h1.title {
   -ms-transition: opacity 0.2s linear;
   -o-transition: opacity 0.2s linear;
   transition: opacity 0.2s linear;
+  left: 0;
   opacity: 0;
   position: absolute;
-  left: 0;
+  table-layout: fixed;
   width: 100%;
 }
 @media only screen and (min-width: 600px) {
   #loop #expanded-views {
-    top: 210px;
+    top: 200px;
   }
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   #loop #expanded-views {
-    top: 150px;
+    top: 138px;
   }
 }
 #loop #expanded-views .view {
-  font-family: "LatoBold";
+  -webkit-transition: color 0.2s ease-in-out;
+  -moz-transition: color 0.2s ease-in-out;
+  -ms-transition: color 0.2s ease-in-out;
+  -o-transition: color 0.2s ease-in-out;
+  transition: color 0.2s ease-in-out;
+  color: #acacab;
   cursor: pointer;
-  box-sizing: border-box;
+  font-family: "LatoRegular";
   padding: 20px 0;
-  display: inline-block;
   text-align: center;
   text-transform: uppercase;
-  width: 49%;
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   #loop #expanded-views .view {
     font-size: 14px;
   }
 }
+#loop #expanded-views .view.active {
+  color: #f2f2f1;
+}
 #loop #expanded-views .view:active {
-  background: black;
+  background-color: rgba(61, 61, 60, 0.4);
 }
 
 #delete {
@@ -791,9 +904,9 @@ h1.title {
   -o-transition-property: -o-transform;
   transition-property: transform;
   background-color: #855758;
-  box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.4);
+  box-shadow: inset 1px -1px 0 rgba(18, 18, 18, 0.2);
   color: #fafafa;
-  font-family: "LatoBlack";
+  font-family: "LatoBla";
   right: 0;
   text-align: center;
   text-transform: uppercase;
@@ -811,6 +924,9 @@ h1.title {
     padding: 16px 0;
     width: 120px;
   }
+  #delete:active {
+    background-color: rgba(133, 87, 88, 0.8);
+  }
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   #delete {
@@ -823,9 +939,9 @@ h1.title {
     padding: 11px 0;
     width: 60px;
   }
-}
-#delete:active {
-  background-color: blue;
+  #delete:active {
+    background-color: #8a5d5e;
+  }
 }
 
 #loop-menu {
@@ -859,9 +975,9 @@ h1.title {
   }
 }
 #loop-menu .button {
-  box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.4);
+  box-shadow: inset 1px 0 0 rgba(18, 18, 18, 0.4);
   display: inline-block;
-  font-family: "LatoBlack";
+  font-family: "LatoBla";
   font-size: 23px;
   padding: 30px 15px;
   position: relative;
@@ -874,6 +990,9 @@ h1.title {
     font-size: 11px;
     padding: 18px 7px;
     width: 60px;
+  }
+  #loop-menu .button:active {
+    background-color: rgba(61, 61, 60, 0.8);
   }
 }
 
@@ -890,14 +1009,13 @@ svg#loop-graph {
 }
 @media only screen and (min-width: 600px) {
   svg#loop-graph {
-    height: 300px;
-    top: 200px;
+    height: 280px;
+    top: 280px;
   }
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   svg#loop-graph {
-    height: 160px;
-    top: 170px;
+    top: 200px;
   }
 }
 svg#loop-graph > * {
@@ -906,16 +1024,47 @@ svg#loop-graph > * {
   -ms-transition: opacity 0.2s linear;
   -o-transition: opacity 0.2s linear;
   transition: opacity 0.2s linear;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
   opacity: 0;
 }
 svg#loop-graph .tick {
   font-family: "PT Sans";
   fill: #ededec;
-  font-size: 12px;
   text-anchor: middle;
 }
+@media only screen and (min-width: 600px) {
+  svg#loop-graph .tick {
+    font-size: 12px;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  svg#loop-graph .tick {
+    font-size: 9px;
+  }
+}
+svg#loop-graph path {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 2px;
+}
 svg#loop-graph .point {
-  fill: blue;
+  fill: #969696;
+  stroke: #707070;
+  stroke-width: 2px;
+}
+svg#loop-graph rect {
+  fill: #535151;
+}
+svg#loop-graph .yTicks line {
+  stroke: #ededec;
+  stroke-width: 1px;
+}
+svg#loop-graph .yTicks text {
+  text-anchor: start;
 }
 
 #loop-buttons {
@@ -932,7 +1081,6 @@ svg#loop-graph .point {
   left: 0;
   position: absolute;
   width: 100%;
-  z-index: 3;
 }
 @media only screen and (min-width: 600px) {
   #loop-buttons {
@@ -985,6 +1133,7 @@ svg#loop-graph .point {
   float: left;
   margin-left: -1px;
   width: 48%;
+  z-index: -1;
 }
 @media only screen and (min-width: 600px) {
   #loop-buttons #amount-space {
@@ -1018,13 +1167,15 @@ svg#loop-graph .point {
 @media only screen and (min-width: 600px) {
   #loop-buttons #add, #loop-buttons #subtract {
     font-size: 80px;
-    margin-top: 46px;
+    padding-top: 46px;
+    padding-bottom: 23px;
   }
 }
 @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
   #loop-buttons #add, #loop-buttons #subtract {
     font-size: 55px;
-    margin-top: 8px;
+    padding-top: 8px;
+    padding-bottom: 4px;
   }
 }
 #loop-buttons #add {
@@ -1046,6 +1197,7 @@ svg#loop-graph .point {
   -ms-transition-property: -ms-transform;
   -o-transition-property: -o-transform;
   transition-property: transform;
+  display: none;
   position: relative;
   margin: 0 auto;
   padding-bottom: 20px;
@@ -1071,7 +1223,7 @@ svg#loop-graph .point {
 }
 #data-buttons .button {
   display: block;
-  font-family: "LatoBlack";
+  font-family: "LatoBla";
   letter-spacing: 1px;
   margin: 0 auto;
   position: relative;
@@ -1093,10 +1245,68 @@ svg#loop-graph .point {
   }
 }
 
-footer {
-  position: relative;
-}
-footer #theme-controls {
+#additional {
+  -webkit-transition: none 0.22s ease-out;
+  -moz-transition: none 0.22s ease-out;
+  -ms-transition: none 0.22s ease-out;
+  -o-transition: none 0.22s ease-out;
+  transition: none 0.22s ease-out;
+  -webkit-transition-delay: 0.13s;
+  -moz-transition-delay: 0.13s;
+  -ms-transition-delay: 0.13s;
+  -o-transition-delay: 0.13s;
+  transition-delay: 0.13s;
+  -webkit-transition-property: -webkit-transform;
+  -moz-transition-property: -moz-transform;
+  -ms-transition-property: -ms-transform;
+  -o-transition-property: -o-transform;
+  transition-property: transform;
+  bottom: 20px;
   position: absolute;
-  right: 200px;
+  text-align: center;
+  width: 100%;
+}
+#additional.slide {
+  -webkit-transition-delay: 0s;
+  -moz-transition-delay: 0s;
+  -ms-transition-delay: 0s;
+  -o-transition-delay: 0s;
+  transition-delay: 0s;
+  -webkit-transform: translate3d(0, 80px, 0);
+  -moz-transform: translate3d(0, 80px, 0);
+  -ms-transform: translate3d(0, 80px, 0);
+  -o-transform: translate3d(0, 80px, 0);
+  transform: translate3d(0, 80px, 0);
+}
+#additional, #additional * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+#additional .link {
+  font-family: "LatoBla";
+  color: #30302f;
+  display: block;
+}
+@media only screen and (min-width: 600px) {
+  #additional .link {
+    font-size: 16px;
+  }
+}
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  #additional .link {
+    font-size: 11px;
+  }
+}
+#additional .link:not(:last-child) {
+  margin-bottom: 6px;
+}
+#additional .link a {
+  color: #6b6b6a;
+  text-decoration: none;
+}
+#additional .link a:active {
+  color: #898988;
 }

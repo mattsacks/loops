@@ -13,7 +13,6 @@ Session = (function(_super) {
     viewNames = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     this.viewNames = viewNames;
     Session.__super__.constructor.call(this, this.localStorage.data);
-    this.save();
     _ref = this.viewNames;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       view = _ref[_i];
@@ -79,13 +78,30 @@ Session = (function(_super) {
     }
   };
 
+  Session.prototype.newSong = function() {
+    var max, ogSong, song;
+    max = music.length - 1;
+    ogSong = this.get('song') || Math.getRandomInt(0, max);
+    song = ogSong;
+    while (song === ogSong) {
+      song = Math.getRandomInt(0, max);
+    }
+    return this.saveSong(song);
+  };
+
+  Session.prototype.saveSong = function(song) {
+    this.set('song', song);
+    this.sync.apply(this, [
+      'update', song, {
+        id: 'song'
+      }
+    ]);
+    return song;
+  };
+
   Session.prototype.localStorage = new Store('loops-session');
 
   Session.prototype.sync = Backbone.sync.store;
-
-  Session.prototype.save = function() {
-    return this.localStorage.save();
-  };
 
   return Session;
 

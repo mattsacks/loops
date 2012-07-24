@@ -37,12 +37,13 @@ LoopView = (function(_super) {
     this.els = {
       "delete": $('#delete'),
       menu: $('#loop-menu'),
-      buttons: $('#loop-buttons')
+      buttons: $('#loop-buttons'),
+      amountSpace: $('#amount-space')
     };
     return this.expandedConfig = {
-      'day': ['today', 'hour', 'day'],
-      'week': ['thisWeek', 'week'],
-      'month': ['month']
+      'day': ['today', 'hours', 'days'],
+      'week': ['thisWeek', 'weeks'],
+      'month': ['months']
     };
   };
 
@@ -53,10 +54,6 @@ LoopView = (function(_super) {
     _.bindAll(this, 'edit', 'mod');
     this.clickEvent = window.mobile === true ? "tap" : "click";
     this.buttonEvents = {
-      '#amount': {
-        method: "edit",
-        args: ["amount"]
-      },
       '#subtract': {
         method: "mod",
         args: ["amount", -1]
@@ -71,6 +68,7 @@ LoopView = (function(_super) {
       run = _ref[selector];
       this.els.buttons.on(this.clickEvent, selector, _.bind.apply(_, [this[run.method], this].concat(__slice.call(run.args))));
     }
+    this.els.amountSpace.on(this.clickEvent, _.bind(this.edit, this));
     this.element.on(this.clickEvent, '.view', _.bind(this.viewChange, this));
     this.element.on(this.clickEvent, '.current', function(e) {
       var index, range;
@@ -104,14 +102,54 @@ LoopView = (function(_super) {
     });
   };
 
-  LoopView.prototype.edit = function(prop) {};
+  LoopView.prototype.amountTemplate = function() {
+    var amount;
+    amount = this.model.get('amount');
+    return "<input id='amount-template' type='tel' placeholder='" + amount + "' />";
+  };
+
+  LoopView.prototype.edit = function(prop) {
+    var blurSave, input, template,
+      _this = this;
+    if ($('amount-template').length !== 0) {
+      return;
+    }
+    template = this.amountTemplate();
+    this.els.amount.html(template);
+    input = this.els.amount.find('input');
+    blurSave = function() {
+      var amount, val;
+      val = input.attr('value');
+      amount = _this.model.get('amount');
+      val = val === '' ? amount : +val;
+      input.off('blur', blurSave);
+      if (/^\d+$/.test(val) && val !== amount) {
+        _this.model.set('amount', val);
+        _this.els.amount.html(val);
+      } else {
+        _this.els.amount.html(amount);
+      }
+      return _this.mod('amount', 0);
+    };
+    input.on('blur', function() {
+      return blurSave();
+    });
+    return input.focus();
+  };
 
   LoopView.prototype.mod = function(prop, amount) {
     var val;
     val = (this.model.get(prop) || 0) + amount;
+    if (val <= 0) {
+      val = 0;
+    }
     this.els[prop].html(val);
     this.model.set(prop, val);
-    return this.menu('save', 'mod');
+    if (val <= 0) {
+      return $(document.body).removeClass(this.menuClass || '');
+    } else {
+      return this.menu('save', 'mod');
+    }
   };
 
   LoopView.prototype.menu = function(operation, menu) {
@@ -172,8 +210,11 @@ LoopView = (function(_super) {
   };
 
   LoopView.prototype.viewChange = function(e) {
-    var view;
-    view = e.target.innerHTML;
+    var $el, view;
+    $el = $(e.target);
+    view = $el.data('range');
+    this.element.find('.view.active').removeClass('active');
+    $el.addClass('active');
     return this.trigger('viewChange', this.model.set('period', view));
   };
 
@@ -201,13 +242,13 @@ LoopView = (function(_super) {
       }
     }, {
       thisWeek: {
-        by: 'thisWeek',
+        by: 'This Week',
         points: [],
         sum: 0
       }
     }, {
       thisWeek: _.range(7)
-    }, _.last(data.weeks)).thisWeek;
+    }, _.last(data.weeks).points).thisWeek;
     return _.flatten([todaysData, current]);
   };
 
@@ -272,9 +313,9 @@ LoopView = (function(_super) {
           collection = _ref[_i];
           collection.headline || (collection.headline = (function() {
             switch (collection.by) {
-              case 'week':
+              case 'by week':
                 return 'This Week';
-              case 'month':
+              case 'by month':
                 return 'This Month';
             }
           })());
@@ -282,8 +323,10 @@ LoopView = (function(_super) {
         return this.currentData;
       },
       active: function() {
-        var val;
-        val = /[\w+\s\w+]$/.test('' + this) ? thiz.model.get('period') === this.concat() : thiz.model.get('range') === this.by;
+        var period, range, val;
+        range = thiz.model.get('range');
+        period = thiz.model.get('period');
+        val = /[\w+\s\w+]$/.test('' + this) ? period === this.concat() : range === 'day' && this.by === 'today' ? true : range === this.by.split(' ')[1];
         if (val === true) {
           return 'active';
         } else {
@@ -294,7 +337,16 @@ LoopView = (function(_super) {
         return _this.model.attributes.amount || 0;
       },
       views: function() {
-        return _this.expandedConfig[_this.model.get('range')];
+        var views;
+        views = _this.expandedConfig[_this.model.get('range')];
+        if (views.length === 1) {
+          return [];
+        } else {
+          return views;
+        }
+      },
+      rangeLabel: function() {
+        return thiz.latestModelData['' + this][0].by;
       }
     };
   };

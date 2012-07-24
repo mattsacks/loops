@@ -26,12 +26,21 @@ class LoopsView extends Backbone.View
       for selector,method of @clickEvents
         @events["#{@clickEvent} #{selector}"] = method
 
+      @events['keydown .new-loop'] = (e) ->
+        if e.keyCode is 13 # return / enter key
+          e.preventDefault()
+          $(e.target).blur() # cheap save
+        else if e.keyCode is 27 # cancel on 'esc' FIXME
+          e.preventDefault()
+          $(e.target).attr('value', '').blur()
+
   # cache templates, elements, jQuery objects, etc
   gather: ->
     @element = this.$el
     @els =
       new: $('#create')
       portability: $('#data-buttons')
+      additional: $('#additional')
       container: $('.container')
     @templates =
       loops: $("##{@options.templateId}").html()
@@ -129,26 +138,39 @@ class LoopsView extends Backbone.View
     next = element.nextElementSibling
     transform = browser.flag + "transform" # include prefix
 
+    offset   = @element.offset().top
+    elOffset = $el.offset().top - offset
+
     if $el.hasClass('active') # close viewing a loop
-      $el.removeClass('active').css transform, 'translate3d(0,-' + $el.offset().top + 'px,0)'
+      @element.css(transform, 'translate3d(0,0,0)').css('height', '')
+
+      $el.removeClass('active').css transform, 'translate3d(0,-' + elOffset + 'px,0)'
       $el.siblings().css transform, 'translate3d(0,0,0)'
-      @els.portability.css transform, 'translate3d(0,0,0)'
+      #@els.portability.css transform, 'translate3d(0,0,0)'
+      @els.additional.removeClass('slide')
 
       return false # the view is closed
     else # open a loop!
+      padding = if window.mobile is true then 0 else 30
+      @element.css(transform, 'translate3d(0,-'+ offset+'px,0)')
+              .css('height', window.ogHeight - offset - padding)
+
       $el.addClass('active').css transform,
-        'translate3d(0,-' + $el.offset().top + 'px,0)'
+        'translate3d(0,-' + elOffset + 'px,0)'
 
       while prev? # move previous siblings over the top by index
         $prev = $(prev)
         top = $prev.offset().top + $prev.height()
         $prev.css transform, 'translate3d(0,-' + top + 'px,0)'
         prev = prev.previousElementSibling
+
       while next? # move siblings past the bottom
-        $(next).css transform, "translate3d(0,#{window.innerHeight}px,0)"
+        $(next).addClass('next')
+               .css transform, "translate3d(0,#{window.ogHeight}px,0)"
         next = next.nextElementSibling
 
-      @els.portability.css transform, "translate3d(0,#{window.innerHeight}px,0)"
+      @els.additional.addClass('slide')
+      #@els.portability.css transform, "translate3d(0,#{window.ogHeight}px,0)"
       return true # the view is now open
 
   # called on tapping the name of a loop in any view

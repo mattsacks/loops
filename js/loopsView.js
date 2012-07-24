@@ -28,19 +28,26 @@ LoopsView = (function(_super) {
     var addClicks,
       _this = this;
     return addClicks = (function() {
-      var method, selector, _ref, _results;
+      var method, selector, _ref;
       _this.clickEvent = window.mobile === true ? "tap" : "click";
       _this.clickEvents = {
         '.loop-item': 'view',
         'label': 'edit'
       };
       _ref = _this.clickEvents;
-      _results = [];
       for (selector in _ref) {
         method = _ref[selector];
-        _results.push(_this.events["" + _this.clickEvent + " " + selector] = method);
+        _this.events["" + _this.clickEvent + " " + selector] = method;
       }
-      return _results;
+      return _this.events['keydown .new-loop'] = function(e) {
+        if (e.keyCode === 13) {
+          e.preventDefault();
+          return $(e.target).blur();
+        } else if (e.keyCode === 27) {
+          e.preventDefault();
+          return $(e.target).attr('value', '').blur();
+        }
+      };
     })();
   };
 
@@ -49,6 +56,7 @@ LoopsView = (function(_super) {
     this.els = {
       "new": $('#create'),
       portability: $('#data-buttons'),
+      additional: $('#additional'),
       container: $('.container')
     };
     return this.templates = {
@@ -156,18 +164,23 @@ LoopsView = (function(_super) {
   };
 
   LoopsView.prototype.slideList = function(element) {
-    var $el, $prev, next, prev, top, transform;
+    var $el, $prev, elOffset, next, offset, padding, prev, top, transform;
     $el = $(element);
     prev = element.previousElementSibling;
     next = element.nextElementSibling;
     transform = browser.flag + "transform";
+    offset = this.element.offset().top;
+    elOffset = $el.offset().top - offset;
     if ($el.hasClass('active')) {
-      $el.removeClass('active').css(transform, 'translate3d(0,-' + $el.offset().top + 'px,0)');
+      this.element.css(transform, 'translate3d(0,0,0)').css('height', '');
+      $el.removeClass('active').css(transform, 'translate3d(0,-' + elOffset + 'px,0)');
       $el.siblings().css(transform, 'translate3d(0,0,0)');
-      this.els.portability.css(transform, 'translate3d(0,0,0)');
+      this.els.additional.removeClass('slide');
       return false;
     } else {
-      $el.addClass('active').css(transform, 'translate3d(0,-' + $el.offset().top + 'px,0)');
+      padding = window.mobile === true ? 0 : 30;
+      this.element.css(transform, 'translate3d(0,-' + offset + 'px,0)').css('height', window.ogHeight - offset - padding);
+      $el.addClass('active').css(transform, 'translate3d(0,-' + elOffset + 'px,0)');
       while (prev != null) {
         $prev = $(prev);
         top = $prev.offset().top + $prev.height();
@@ -175,10 +188,10 @@ LoopsView = (function(_super) {
         prev = prev.previousElementSibling;
       }
       while (next != null) {
-        $(next).css(transform, "translate3d(0," + window.innerHeight + "px,0)");
+        $(next).addClass('next').css(transform, "translate3d(0," + window.ogHeight + "px,0)");
         next = next.nextElementSibling;
       }
-      this.els.portability.css(transform, "translate3d(0," + window.innerHeight + "px,0)");
+      this.els.additional.addClass('slide');
       return true;
     }
   };

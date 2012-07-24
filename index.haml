@@ -1,6 +1,6 @@
 !!! 5
 %html
-  -#{:manifest => 'app.manifest'}
+  -# {:manifest => 'app.manifest'}
   %head
     %meta{:charset => "utf-8"}
     %title Loops
@@ -10,7 +10,7 @@
     %meta{:name => "apple-mobile-web-app-capable", :content => "yes"}
     %meta{:name => "apple-mobile-web-app-status-bar-style", :content =>"black"}
 
-    %link{:rel => "apple-touch-icon-precomposed", :sizes => "114x114", :href => "icon-hi9@2x.png"}
+    %link{:rel => "apple-touch-icon-precomposed", :sizes => "114x114", :href => "icon-hi19.png"}
     %link{:rel => 'stylesheet', :href => 'styles/stylesheet.css'}
     -# livereload
     :javascript
@@ -18,8 +18,16 @@
 
   %body
     .container
+      #install
+        %h2 by matt sacks
+        %p Select "Add to Home Screen"
+        #arrow
+          %svg{:height => "19px", :version => "1.1", :width => "17px", :xmlns => "http://www.w3.org/2000/svg"}
+            %g
+              %path{:d => "M3,0 C3,0 3,0 4,0 L13,0 C13,0 14,0 14,0 L14,10 L16,10 C17,10 17,10 17,11 L10,18 C9,19 8,19 7,18 L0,11 C0,10 0,10 1,10 L3,10 L3,0", :fill => "rgb(62,62,61)", :stroke => "rgb(142,142,141)", "stroke-width" => "1"}
+              %path{:d => "", :fill => "rgb(72,72,71)", :stroke => "rgb(150,150,150)", "stroke-width" => "1"}
+
       #titlebar
-        #resume.button r
         %h1.title.column loops
         #create.button +
 
@@ -42,11 +50,15 @@
               </div>
             {{/currents}}
           </div>
-          <div id="expanded-views">
-            {{#views}}
-              <div class="view {{active}}">{{.}}</div>
-            {{/views}}
-          </div>
+          <table id="expanded-views">
+            <tbody>
+              <tr>
+                {{#views}}
+                  <td data-range="{{.}}" class="view {{active}}">{{rangeLabel}}</td>
+                {{/views}}
+              </tr>
+            </tbody>
+          </table>
           <div id="amount">{{amount}}</div>
       %svg#loop-graph
       #loop-buttons
@@ -72,6 +84,14 @@
         #import.button Import
         #export.button Export
 
+      #additional
+        .link
+          built on
+          %a#music good music
+        .link
+          created by
+          %a#author{:href => 'http://sacks.io'} matt sacks
+
     %script{:src => 'js/lib/zepto.min.js'}=""
     %script{:src => 'js/lib/underscore-min.js'}=""
     %script{:src => 'js/lib/backbone-min.js'}=""
@@ -85,4 +105,5 @@
     %script{:src => 'js/loopsView.js'}=""
     %script{:src => 'js/loopView.js'}=""
     %script{:src => 'js/graph.js'}=""
+    %script{:src => 'js/music.js'}=""
     %script{:src => 'js/index.js'}=""

@@ -20,16 +20,16 @@ class LoopView extends Backbone.View
       menu: @options.menuTemplate
 
     @element  = this.$el
-    @els      =
-      delete:  $('#delete')
-      menu:    $('#loop-menu')
-      buttons: $('#loop-buttons')
-
+    @els =
+      delete:      $('#delete')
+      menu:        $('#loop-menu')
+      buttons:     $('#loop-buttons')
+      amountSpace: $('#amount-space')
 
     @expandedConfig =
-      'day':   ['today', 'hour', 'day']
-      'week':  ['thisWeek', 'week']
-      'month': ['month']
+      'day':   ['today', 'hours', 'days']
+      'week':  ['thisWeek', 'weeks']
+      'month': ['months']
 
   attach: ->
     thiz = this
@@ -39,7 +39,6 @@ class LoopView extends Backbone.View
 
     @buttonEvents =
       # button selector, method to call, args to pass
-      '#amount':   method: "edit", args: ["amount"]
       '#subtract': method: "mod",  args: ["amount", -1]
       '#add':      method: "mod",  args: ["amount", 1]
 
@@ -50,6 +49,9 @@ class LoopView extends Backbone.View
         # splat the args as args[0], args[1], ..., args[n] dyanmic yo
         _.bind(@[run.method], this, run.args...)
 
+    # edit the amount of this loop
+    @els.amountSpace.on @clickEvent, _.bind(@edit, this)
+
     # call viewChange when clicking one of the view buttons
     @element.on @clickEvent, '.view', _.bind(@viewChange, this)
 
@@ -58,10 +60,9 @@ class LoopView extends Backbone.View
       index = thiz.els.currents.indexOf(this)
       range = _.keys(thiz.expandedConfig)[index]
       thiz.model.set # update the view on the modelll
-                     # if you must know, it allows the session to persist
         range:  range
         period: thiz.expandedConfig[range][0] # current
-      thiz.render() # re-render shiz =\
+      thiz.render()
 
     # pass '' as the alternative second-menu name since a mouse event gets passed
     @els.delete.on @clickEvent, _.bind(@menu, this, 'delete', '')
@@ -84,13 +85,45 @@ class LoopView extends Backbone.View
       operation = $body.attr('class').match(/menu-(\w+)/)[1]
       @helpers[operation]["on" + id]?()
 
+  amountTemplate: ->
+    amount = @model.get('amount')
+    "<input id='amount-template' type='tel' placeholder='#{amount}' />"
+
   edit: (prop) ->
+    return if $('amount-template').length isnt 0
+    template = @amountTemplate()
+    @els.amount.html(template)
+    input = @els.amount.find('input')
+
+    blurSave = =>
+      val    = input.attr('value')
+      amount = @model.get('amount')
+      # some backwards shit
+      val    = if val is '' then amount else +val
+
+      # if its a digit then save it
+      input.off 'blur', blurSave
+      if /^\d+$/.test(val) and val isnt amount
+        @model.set('amount', val)
+        @els.amount.html(val)
+      else @els.amount.html(amount)
+
+      @mod('amount', 0) # update the menu
+
+    input.on 'blur', -> blurSave()
+    input.focus() # balls ass
 
   mod: (prop, amount) ->
     val = (@model.get(prop) or 0) + amount
+    val = 0 if val <= 0 # CLEAN
     @els[prop].html(val)
+    # prop is always 'amount'..
     @model.set(prop, val) # fires the 'change' event
-    @menu('save', 'mod')
+
+    if val <= 0 # don't allow negative numbers
+      $(document.body).removeClass(@menuClass or '')
+    else
+      @menu('save', 'mod')
 
   # opens the menu and hides the #delete button, attaches an event on the body
   # for any tap that's outside of its elements to dismiss it
@@ -102,8 +135,8 @@ class LoopView extends Backbone.View
     $(document.body).addClass(@menuClass)
 
   delete: ->
-    $parent = $("##{@model.get('id')}")
-    
+    $parent = $("##{@model.get('id')}") # loop id
+
     properRemove = (e) ->
       $this = $(this)
       if $this.is('li') then $this.remove() else $this.html('')
@@ -112,7 +145,7 @@ class LoopView extends Backbone.View
     els = $parent.add(@element)
     els.on
       'webkitTransitionEnd': properRemove
-      'transitionEnd': properRemove
+      'transitionEnd':       properRemove
 
     loopsView.view(target: $parent)
     els.addClass('delete')
@@ -123,7 +156,7 @@ class LoopView extends Backbone.View
     point = val: @model.get('amount'), time: +new Date()
     data = @model.get('data')
     data[@currentPoint or point.time] = point.val
-    @model.set('data', data)
+    @model.set('data', data) # updates the data points
     @collection.save() #FIXME
     @cancel() # close the menu
     @render() # re-render the view
@@ -135,8 +168,11 @@ class LoopView extends Backbone.View
     @menuClass = ''
 
   viewChange: (e) ->
-    view = e.target.innerHTML #FIXME
-    # TODO update the HTML in the template too =\
+    $el  = $(e.target)
+    view = $el.data('range')
+    @element.find('.view.active').removeClass('active')
+    $el.addClass('active')
+
     # tell the Graph to render a new data type yo
     @trigger('viewChange', @model.set('period', view))
 
@@ -156,9 +192,9 @@ class LoopView extends Backbone.View
 
     data.thisWeek = @model.migrate(
       { thisWeek: (p) -> moment(+p.time).day() }, # mapping
-      { thisWeek: { by: 'thisWeek',  points: [], sum: 0 } }, # schema
+      { thisWeek: { by: 'This Week',  points: [], sum: 0 } }, # schema
       { thisWeek: _.range(7) }, # index of day of week for labels
-      _.last(data.weeks) # the data to migrate
+      _.last(data.weeks).points # the data to migrate
     ).thisWeek # grab the property off the data object returned
 
     # push todaysData to the front for the template
@@ -207,17 +243,30 @@ class LoopView extends Backbone.View
     currents: ->
       for collection in @currentData # set headlines
         collection.headline or= switch collection.by
-          when 'week'  then 'This Week'
-          when 'month' then 'This Month'
+          when 'by week'  then 'This Week'
+          when 'by month' then 'This Month'
       return @currentData
 
     # if the current 'current' bin is the viewing
     active: ->
-      val = if /[\w+\s\w+]$/.test(''+this)
-        thiz.model.get('period') is @concat()
-      else thiz.model.get('range') is @by
+      range  = thiz.model.get('range')
+      period = thiz.model.get('period')
+
+      val =
+        if /[\w+\s\w+]$/.test(''+this) then period is @concat()
+        else if range is 'day' and @by is 'today' then true
+        # remove the 'by' from 'by week'
+        else range is @by.split(' ')[1]
+
       if val is true then 'active' else ''
 
     amount: => @model.attributes.amount or 0
 
-    views: => @expandedConfig[@model.get('range')]
+    views: =>
+      views = @expandedConfig[@model.get('range')]
+      if views.length is 1 then [] else views
+
+    rangeLabel: ->
+      # get the first object's 'by' label from the model data '' + this will be
+      # 'month' or 'thisWeek' from iterating through the view configs
+      thiz.latestModelData[''+this][0].by
