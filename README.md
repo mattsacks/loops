@@ -6,6 +6,8 @@ and all data lives in `localStorage`.
 Designed for use from the home screen on an iPhone but also works in desktop
 browsers.
 
+![img](http://f.cl.ly/items/3Y333g2I030H120u2H1l/loops.png)
+
 ## Why
 
 I wanted a general purpose tracker for qualitative data over time to create
