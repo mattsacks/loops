@@ -4,16 +4,16 @@
 @import 'fonts'
 @import 'animations'
 
+html, body
+  height: 100%
+
 body
   background-color: #424241
-  min-height: 420px
   opacity: 0
 
   &.to-install
     &, .container
-      min-height: none
-      height: 340px !important
-      max-height: 340px !important
+      height: 100%
       overflow: hidden
     
     .container > *
@@ -23,10 +23,14 @@ body
       display: block
       opacity: 1
 
+    .author
+      display: block
+
     #titlebar
       opacity: 1
       #create
         opacity: 0
+
 
   // post rendering all the templates on domready
   &.show
@@ -37,9 +41,6 @@ body
     .container
       +respond-to(desktop)
         padding-bottom: 8px
-      +respond-to(handheld)
-        height: 460px !important
-        max-height: 460px !important
 
     #loops
       margin-bottom: 0
@@ -89,16 +90,10 @@ body
 
 // cut off x-overflow w/ container
 .container
+  height: 100%
   position: relative
   overflow-x: hidden
   overflow-y: hidden
-
-  +respond-to(desktop)
-    // TODO do a more precise media query
-    min-height: 780px
-  +respond-to(handheld)
-    height: 460px
-    max-height: 460px
 
 .button
   +user-select(none)
@@ -114,19 +109,14 @@ body
     text-shadow: inset -1px -1px 0px rgba(250,250,250,0.5) 
 
 #install
+  bottom: 20px
   color: rgb(113,113,112)
   display: none
   font-family: "LatoBla"
   font-weight: normal
   position: absolute
   text-align: center
-  top: 15%
   width: 100%
-
-  h2
-    font-size: 13px
-    font-weight: 100
-    margin-bottom: 200px
 
   #arrow
     margin-top: 20px
@@ -170,6 +160,20 @@ h1.title
     box-shadow: 0 -1px 1px rgba(240,240,240,0.54)
     font-size: 30px
     padding: 7px 0
+
+.author
+  display: none
+  font-family: "LatoBla"
+  font-weight: normal
+  text-align: center
+  font-size: 13px
+  font-weight: 100
+  margin-bottom: 200px
+
+  &, a
+    color: rgb(113,113,112)
+  a
+    text-decoration: none
 
 // individual loop list items
 #loops
@@ -446,7 +450,7 @@ svg#loop-graph
   width: 100%
 
   +respond-to(desktop)
-    height: 280px
+    height: 280px // FIXME
     top: 280px
   +respond-to(handheld)
     top: 200px
@@ -599,40 +603,5 @@ svg#loop-graph
       font-size: 15px
       padding: 10px 0
       width: 157px
-
-#additional
-  +transition(none 0.22s ease-out)
-  +transition-delay(0.13s)
-  +translorm
-  bottom: 20px
-  position: absolute
-  text-align: center
-  width: 100%
-
-  &.slide
-    +transition-delay(0s)
-    +transform(translate3d(0,80px,0))
-
-  &, * 
-    +user-select(none)
-
-  .link
-    font-family: "LatoBla"
-    color: rgb(48,48,47)
-    display: block
-
-    +respond-to(desktop)
-      font-size: 16px
-    +respond-to(handheld)
-      font-size: 11px
-
-    &:not(:last-child)
-      margin-bottom: 6px
-
-    a
-      color: rgb(107,107,106)
-      text-decoration: none
-      &:active
-        color: rgb(137,137,136)
 
 // vim: fdm=indent fdn=2 fml=3 fdl=0

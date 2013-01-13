@@ -10,16 +10,18 @@
     <meta content='black' name='apple-mobile-web-app-status-bar-style' />
     <link href='icon-hi19.png' rel='apple-touch-icon-precomposed' sizes='114x114' />
     <link href='styles/stylesheet.css' rel='stylesheet' />
-    <script type='text/javascript'>
-      //<![CDATA[
-        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
-      //]]>
-    </script>
+    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
   </head>
   <body>
     <div class='container'>
+      <div id='titlebar'>
+        <h1 class='title column'>loops</h1>
+        <h2 class="author">
+          <a href='http://sacks.io'>matt sacks</a>
+</h2>
+        <div class='button' id='create'>+</div>
+      </div>
       <div id='install'>
-        <h2>by matt sacks</h2>
         <p>Select "Add to Home Screen"</p>
         <div id='arrow'>
           <svg height='19px' version='1.1' width='17px' xmlns='http://www.w3.org/2000/svg'>
@@ -29,10 +31,6 @@
             </g>
           </svg>
         </div>
-      </div>
-      <div id='titlebar'>
-        <h1 class='title column'>loops</h1>
-        <div class='button' id='create'>+</div>
       </div>
       <div class='button' id='delete'>Delete Loop</div>
       <div id='loop-menu'></div>
@@ -85,16 +83,6 @@
         <div class='button' id='import'>Import</div>
         <div class='button' id='export'>Export</div>
       </div>
-      <div id='additional'>
-        <div class='link'>
-          built on
-          <a id='music'>good music</a>
-        </div>
-        <div class='link'>
-          created by
-          <a href='http://sacks.io' id='author'>matt sacks</a>
-        </div>
-      </div>
     </div>
     <script src='js/lib/zepto.min.js'></script>
     <script src='js/lib/underscore-min.js'></script>
@@ -108,7 +96,6 @@
     <script src='js/loopsView.js'></script>
     <script src='js/loopView.js'></script>
     <script src='js/graph.js'></script>
-    <script src='js/music.js'></script>
     <script src='js/index.js'></script>
   </body>
 </html>

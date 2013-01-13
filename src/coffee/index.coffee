@@ -71,12 +71,9 @@ $ -> # document.ready
 
   window.session  = new Session('loopsView', 'loopView')
 
+  # new visitor!
   if window.navigator.standalone is false
     $(document.body).addClass('to-install')
-
-  # music
-  song = session.newSong()
-  $('#music').attr('href', music[song])
 
   $(document.body).addClass('show')
 

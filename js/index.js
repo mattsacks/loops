@@ -83,7 +83,6 @@ Browser = (function() {
 })();
 
 $(function() {
-  var song;
   window.browser = new Browser();
   window.ogHeight = window.innerHeight;
   window.platform = browser.Platform.name;
@@ -103,7 +102,5 @@ $(function() {
   if (window.navigator.standalone === false) {
     $(document.body).addClass('to-install');
   }
-  song = session.newSong();
-  $('#music').attr('href', music[song]);
   return $(document.body).addClass('show');
 });

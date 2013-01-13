@@ -330,15 +330,16 @@ ul {
   }
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
   background-color: #424241;
-  min-height: 420px;
   opacity: 0;
 }
 body.to-install, body.to-install .container {
-  min-height: none;
-  height: 340px !important;
-  max-height: 340px !important;
+  height: 100%;
   overflow: hidden;
 }
 body.to-install .container > * {
@@ -347,6 +348,9 @@ body.to-install .container > * {
 body.to-install #install {
   display: block;
   opacity: 1;
+}
+body.to-install .author {
+  display: block;
 }
 body.to-install #titlebar {
   opacity: 1;
@@ -360,12 +364,6 @@ body.show {
 @media only screen and (min-width: 600px) {
   body.viewing .container {
     padding-bottom: 8px;
-  }
-}
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-  body.viewing .container {
-    height: 460px !important;
-    max-height: 460px !important;
   }
 }
 body.viewing #loops {
@@ -472,20 +470,10 @@ body.menu #loop-menu {
 }
 
 .container {
+  height: 100%;
   position: relative;
   overflow-x: hidden;
   overflow-y: hidden;
-}
-@media only screen and (min-width: 600px) {
-  .container {
-    min-height: 780px;
-  }
-}
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-  .container {
-    height: 460px;
-    max-height: 460px;
-  }
 }
 
 .button {
@@ -507,19 +495,14 @@ body.menu #loop-menu {
 }
 
 #install {
+  bottom: 20px;
   color: #717170;
   display: none;
   font-family: "LatoBla";
   font-weight: normal;
   position: absolute;
   text-align: center;
-  top: 15%;
   width: 100%;
-}
-#install h2 {
-  font-size: 13px;
-  font-weight: 100;
-  margin-bottom: 200px;
 }
 #install #arrow {
   margin-top: 20px;
@@ -573,6 +556,22 @@ h1.title {
     font-size: 30px;
     padding: 7px 0;
   }
+}
+
+.author {
+  display: none;
+  font-family: "LatoBla";
+  font-weight: normal;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 100;
+  margin-bottom: 200px;
+}
+.author, .author a {
+  color: #717170;
+}
+.author a {
+  text-decoration: none;
 }
 
 #loops {
@@ -1243,70 +1242,4 @@ svg#loop-graph .yTicks text {
     padding: 10px 0;
     width: 157px;
   }
-}
-
-#additional {
-  -webkit-transition: none 0.22s ease-out;
-  -moz-transition: none 0.22s ease-out;
-  -ms-transition: none 0.22s ease-out;
-  -o-transition: none 0.22s ease-out;
-  transition: none 0.22s ease-out;
-  -webkit-transition-delay: 0.13s;
-  -moz-transition-delay: 0.13s;
-  -ms-transition-delay: 0.13s;
-  -o-transition-delay: 0.13s;
-  transition-delay: 0.13s;
-  -webkit-transition-property: -webkit-transform;
-  -moz-transition-property: -moz-transform;
-  -ms-transition-property: -ms-transform;
-  -o-transition-property: -o-transform;
-  transition-property: transform;
-  bottom: 20px;
-  position: absolute;
-  text-align: center;
-  width: 100%;
-}
-#additional.slide {
-  -webkit-transition-delay: 0s;
-  -moz-transition-delay: 0s;
-  -ms-transition-delay: 0s;
-  -o-transition-delay: 0s;
-  transition-delay: 0s;
-  -webkit-transform: translate3d(0, 80px, 0);
-  -moz-transform: translate3d(0, 80px, 0);
-  -ms-transform: translate3d(0, 80px, 0);
-  -o-transform: translate3d(0, 80px, 0);
-  transform: translate3d(0, 80px, 0);
-}
-#additional, #additional * {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-  user-select: none;
-}
-#additional .link {
-  font-family: "LatoBla";
-  color: #30302f;
-  display: block;
-}
-@media only screen and (min-width: 600px) {
-  #additional .link {
-    font-size: 16px;
-  }
-}
-@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-  #additional .link {
-    font-size: 11px;
-  }
-}
-#additional .link:not(:last-child) {
-  margin-bottom: 6px;
-}
-#additional .link a {
-  color: #6b6b6a;
-  text-decoration: none;
-}
-#additional .link a:active {
-  color: #898988;
 }
