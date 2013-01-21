@@ -72,12 +72,7 @@ Graph = (function() {
       case 'today':
         return moment(d);
       case 'hours':
-        if (data.points.length === 0) {
-          return false;
-        } else {
-          return moment().hours(d).minutes(0);
-        }
-        break;
+        return moment().hours(d).minutes(0);
       case 'days':
         return moment(d);
       case 'weeks':
@@ -163,7 +158,7 @@ Graph = (function() {
   };
 
   Graph.prototype.drawXTicks = function(scales, data) {
-    var ticks, timeFormat, translate, x, xAxis, xTicks,
+    var mod, ticks, timeFormat, translate, x, xAxis, xTicks,
       _this = this;
     xAxis = this.graph.append('g').attr('class', 'ticks xTicks').attr('transform', "translate(0, " + (this.graph.height - 5) + ")");
     if (this.range === 'today') {
@@ -183,9 +178,21 @@ Graph = (function() {
       return translate(d);
     });
     timeFormat = this.timeFormat();
-    xTicks.append('svg:text').text(function(d, i) {
+    mod = (function() {
+      switch (this.range) {
+        case 'hours':
+          return 2;
+        case 'days':
+          return Math.floor(data.length / 10) || 1;
+        default:
+          return 1;
+      }
+    }).call(this);
+    xTicks.filter(function(d, i) {
+      return i % mod === 0;
+    }).append('svg:text').text(function(d, i) {
       var time;
-      time = _this.tickFormat(d, data[i]);
+      time = _this.tickFormat(d);
       if (time === false) {
         return '';
       }
@@ -194,6 +201,9 @@ Graph = (function() {
       }
       return time.format(timeFormat);
     });
+    if (this.range === 'today') {
+      xTicks.append('svg:line').attr('class', 'ruler').attr('y1', '-15').attr('y2', '-275');
+    }
     return xTicks;
   };
 
@@ -202,7 +212,7 @@ Graph = (function() {
       _this = this;
     yAxis = this.graph.append('g').attr('class', 'ticks yTicks');
     if (window.mobile === true) {
-      ticks = scales.y.ticks(3);
+      ticks = scales.y.ticks(10);
       scales.x.range([this.margin + 10, this.graph.width - this.margin]);
     } else {
       ticks = scales.y.ticks(5);
@@ -211,6 +221,7 @@ Graph = (function() {
       return "translate(10, " + (scales.marginY(d)) + ")";
     });
     yTicks.append('svg:text').attr('dy', 5).text(d3.format('d'));
+    yTicks.append('svg:line').attr('class', 'ruler').attr('x1', 10).attr('x2', this.graph.width - 20).attr('transform', 'translate(0, 2)');
     this.line = this.graph.selectAll('path').data([data]).enter().append('svg:path');
     this.nodes = this.graph.selectAll('.point').data(data).enter().append('svg:circle').attr('class', 'point');
     draw = function(k) {
@@ -254,7 +265,7 @@ Graph = (function() {
       return "translate(" + (x(i)) + ", 0)";
     });
     bar.append('svg:rect').attr('width', x.rangeBand()).attr('height', 0).each(function(d, i) {
-      return d3.select(this).transition().delay((800 / data.length) * i).duration(220).attr('height', function(d) {
+      return d3.select(this).transition().delay((600 / data.length) * i).duration(175).attr('height', function(d) {
         return y(d.val || d.sum);
       });
     });
@@ -263,7 +274,7 @@ Graph = (function() {
       if (d.val === 0 || d.sum === 0) {
         return;
       }
-      return d3.select(this).transition().delay((800 / data.length) * i).duration(220).text(d.val || d.sum).attr('y', function(d) {
+      return d3.select(this).transition().delay((600 / data.length) * i).duration(175).text(d.val || d.sum).attr('y', function(d) {
         height = d.val || d.sum;
         return -1 * y(height) + tickOffset;
       });

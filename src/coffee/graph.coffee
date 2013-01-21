@@ -160,6 +160,13 @@ class Graph
           timeFormat = if moment(time).hours() < 12 then 'h[a]' else 'h[p]'
         return time.format(timeFormat))
 
+    # add ruler lines for the timeseries
+    if @range is 'today'
+      xTicks.append('svg:line')
+        .attr('class', 'ruler')
+        .attr('y1', '-15')
+        .attr('y2', '-275')
+
     return xTicks
 
   drawTimeSeries: (scales, data) ->
@@ -168,7 +175,7 @@ class Graph
       .attr('class', 'ticks yTicks')
 
     if window.mobile is true
-      ticks = scales.y.ticks(3)
+      ticks = scales.y.ticks(10)
       scales.x.range([@margin + 10, @graph.width - @margin])
     else
       ticks = scales.y.ticks(5)
@@ -185,6 +192,12 @@ class Graph
       .append('svg:text')
       .attr('dy', 5)
       .text(d3.format('d'))
+    yTicks
+      .append('svg:line')
+      .attr('class', 'ruler')
+      .attr('x1', 10)
+      .attr('x2', @graph.width - 20)
+      .attr('transform', 'translate(0, 2)')
 
     @line = @graph
       .selectAll('path')
