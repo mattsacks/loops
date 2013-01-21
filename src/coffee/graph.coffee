@@ -44,9 +44,7 @@ class Graph
   tickFormat: (d, data) ->
     switch @range
       when 'today'    then moment(d)
-      when 'hours'
-        if data.points.length is 0 then false
-        else moment().hours(d).minutes(0)
+      when 'hours'    then moment().hours(d).minutes(0)
       when 'days'     then moment(d)
       when 'weeks'    then moment(d)
       when 'thisWeek' then moment().day(d)
@@ -145,10 +143,18 @@ class Graph
       .attr('transform', (d) -> translate(d))
 
     timeFormat = @timeFormat()
+    # how many ticks to append
+    mod = switch @range
+      # every other hour
+      when 'hours' then 2
+      # for the day ticks (m/dd), every other one per 10 days
+      when 'days' then Math.floor(data.length / 10) || 1
+      else 1
     xTicks
+      .filter((d,i) -> return i % mod is 0)
       .append('svg:text')
       .text((d,i) =>
-        time = @tickFormat(d,data[i])
+        time = @tickFormat(d)
         if time is false then return ''
         if @range is 'hours' and window.mobile is true
           timeFormat = if moment(time).hours() < 12 then 'h[a]' else 'h[p]'
