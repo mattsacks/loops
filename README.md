@@ -16,8 +16,8 @@ complex, or had no visualization mechanism.
 
 ## Code
 
-All source is written in [CoffeeScript](http://coffeescript.org),
-[SASS](http://sass-lang.com), and [HAML](http://haml.info).  
+The source is HTML, [CoffeeScript](http://coffeescript.org), and
+[SASS](http://sass-lang.com).
 
 There are no images used (besides the app icon).  
 
