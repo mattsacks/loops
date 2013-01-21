@@ -248,8 +248,8 @@ class Graph
       .attr('height', 0)
       .each((d,i) -> d3.select(this)
         .transition()
-        .delay((800 / data.length)*i)
-        .duration(220)
+        .delay((600 / data.length)*i)
+        .duration(175)
         .attr('height', (d) -> y(d.val or d.sum)))
 
     tickOffset = if window.mobile is true then 15 else 20
@@ -262,11 +262,11 @@ class Graph
         return if d.val is 0 or d.sum is 0
         d3.select(this)
           .transition()
-          .delay((800 / data.length)*i)
-          .duration(220)
+          .delay((600 / data.length)*i)
+          .duration(175)
           .text(d.val or d.sum)
           .attr('y', (d) ->
-            height = (d.val or d.sum)
+            height = d.val or d.sum
             return -1 * y(height) + tickOffset))
 
   render: ->
