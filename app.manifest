@@ -3,19 +3,8 @@ CACHE MANIFEST
 
 index.html
 styles/stylesheet.css
-js/lib/zepto.min.js
-js/lib/underscore-min.js
-js/lib/backbone-min.js
-js/lib/backbone-localstorage.js
-js/lib/moment.min.js
-js/lib/mustache.js
-js/lib/d3.v2.min.js
-js/graph.js
-js/loop.js
-js/loopView.js
-js/loopsView.js
-js/session.js
-js/index.js
+js/build/deps.js
+js/build/src.js
 fonts/Lato-Light.ttf
 fonts/Lato-Regular.ttf
 fonts/Lato-Bla.ttf
