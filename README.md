@@ -51,23 +51,11 @@ IP:port is on your iOS device (or browser).
   Nope
 
 * _How about export/import?_  
-  Will do something like anonymous posting to private gists
-
-* _Better iPad support?_  
-  Yeah, later
-
-* _What about Android support?_  
-  No
+  I want to do something like anonymous posting to private gists
 
 * _How do I custom set the loops data?_  
   Type out `JSON.parse(localStorage.getItem('loops'))` in the console to see how
   the data should be structured. Set it with `localStorage.setItem`
 
 * _Why is the box glowing?_  
-  Because I thought it was cool and took [no code](https://github.com/mattsa/loops/blob/master/src/sass/_animations.sass)
-
-* _I don't like the music_  
-  That sucks
-
-* _I want to add songs to the music list_  
-  Totally. Open a pull request with a link
+  Because I thought it was cool and took [no code](https://github.com/mattsacks/loops/blob/master/src/sass/_animations.sass)
