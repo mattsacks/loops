@@ -291,6 +291,7 @@ h1.title
     border-bottom: 1px solid #3D3D3D
     opacity: 0
     position: absolute
+    top: 52px
     width: 100%
 
     .current
@@ -441,19 +442,19 @@ h1.title
       &:active
         background-color: rgba(61, 61, 60, 0.80)
 
+// big container for most things
+#loop
+  height: 100%
+
 // the time series graph
-svg#loop-graph
+#loop-graph
   +transition(opacity 0.2s linear)
+  bottom: 100px
   opacity: 0
   box-sizing: border-box
   position: absolute
   width: 100%
-
-  +respond-to(desktop)
-    height: 280px // FIXME
-    top: 280px
-  +respond-to(handheld)
-    top: 200px
+  height: 250px
 
   > *
     +transition(opacity 0.2s linear)
@@ -480,13 +481,14 @@ svg#loop-graph
     stroke: rgb(112, 112, 112)
     stroke-width: 2px
 
+  .ruler
+    stroke: #555
+    stroke-opacity: 0.3
+
   rect
     fill: rgb(83, 81, 81)
 
   .yTicks
-    line
-      stroke: #EDEDEC
-      stroke-width: 1px
     text
       text-anchor: start
 
