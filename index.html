@@ -39,6 +39,14 @@
         <div id="cancel" class="button">{{cancel}}</div>
         <div id="save" class="button">{{save}}</div>
       </script>
+      <ul id='loops'></ul>
+      <script id='loop-template' type='text/x-template'>
+        {{#loops}}
+          <li id="{{id}}" class="loop-item">
+            <label>{{label}}</label>
+          </li>
+        {{/loops}}
+      </script>
       <div id='loop'></div>
       <script id='loop-detail-template' type='text/x-temmplate'>
         <div id="lighting"></div>
@@ -67,14 +75,6 @@
         <div id='amount-space'>&nbsp;</div>
         <div class='button' id='add'>+</div>
       </div>
-      <ul id='loops'></ul>
-      <script id='loop-template' type='text/x-template'>
-        {{#loops}}
-          <li id="{{id}}" class="loop-item">
-            <label>{{label}}</label>
-          </li>
-        {{/loops}}
-      </script>
       <script id='loop-new-template' type='text/x-template'>
         <li id="{{id}}" class="loop new-loop">
           <input placeholder="{{placeholder}}" class="new" />
