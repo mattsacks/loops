@@ -212,10 +212,10 @@ Graph = (function() {
       _this = this;
     yAxis = this.graph.append('g').attr('class', 'ticks yTicks');
     if (window.mobile === true) {
-      ticks = scales.y.ticks(10);
+      ticks = scales.y.ticks(8);
       scales.x.range([this.margin + 10, this.graph.width - this.margin]);
     } else {
-      ticks = scales.y.ticks(5);
+      ticks = scales.y.ticks(10);
     }
     yTicks = yAxis.selectAll('g').data(ticks).enter().append('g').attr('class', 'tick').attr('transform', function(d) {
       return "translate(10, " + (scales.marginY(d)) + ")";
@@ -234,7 +234,7 @@ Graph = (function() {
         return scales.x(+(d.time || d.label));
       }).attr('cy', function(d) {
         return scales.marginY(d.val || d.sum);
-      }).attr('r', 5).transition().duration(400).attrTween('r', function(d) {
+      }).attr('r', 5).transition().duration(500).attrTween('r', function(d) {
         return function(t) {
           return d3.interpolate(10, 5)(t);
         };

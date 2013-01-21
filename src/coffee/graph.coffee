@@ -175,10 +175,10 @@ class Graph
       .attr('class', 'ticks yTicks')
 
     if window.mobile is true
-      ticks = scales.y.ticks(10)
+      ticks = scales.y.ticks(8)
       scales.x.range([@margin + 10, @graph.width - @margin])
     else
-      ticks = scales.y.ticks(5)
+      ticks = scales.y.ticks(10)
 
     yTicks = yAxis
       .selectAll('g')
@@ -223,7 +223,7 @@ class Graph
         .attr('cy', (d) -> scales.marginY(d.val or d.sum))
         .attr('r', 5)
         .transition()
-        .duration(400)
+        .duration(500)
         # return an interpolater for the values from 10 to 5 for the radius of
         # the node 
         .attrTween 'r', (d) => (t) -> d3.interpolate(10, 5)(t)
