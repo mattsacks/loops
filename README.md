@@ -10,7 +10,7 @@ browsers.
 
 ## Why
 
-I wanted a general purpose tracker for qualitative data over time to create
+I wanted a general purpose tracker for quantitative data over time to create
 small-friction feedback loops. Everything else was either overpriced, too
 complex, or had no visualization mechanism.
 
