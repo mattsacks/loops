@@ -119,18 +119,16 @@ class LoopsView extends Backbone.View
       if window.mobile is true then window.scrollTo(0,0)
       else $.scroll(0)
 
-    if !$(document.body).hasClass('viewing') # the loops view
-      @slideList(e.target)
+    if @slideList(e.target) is true # the loops view
       @subView.render(null, @collection.get(e.target.id))
       setTimeout =>
         $(document.body).attr('class', 'show viewing ' + @subView.menuClass)
       , 1
     else #closing a view
-      @setContainer()
-      @slideList(e.target)
       @subView.menuClass = ''
       $(document.body).attr('class', 'show')
       @trigger('render', this)
+      setTimeout @setContainer.bind(this), 10
 
   # open or close the loop list
   # returns: true if ending as opened (viewing a loop)
