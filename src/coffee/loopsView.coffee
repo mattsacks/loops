@@ -126,8 +126,9 @@ class LoopsView extends Backbone.View
       , 1
     else #closing a view
       @subView.menuClass = ''
-      $(document.body).attr('class', 'show') # FIXME this will fuck me
+      $(document.body).attr('class', 'show')
       @trigger('render', this)
+      @postRender()
 
   # open or close the loop list
   # returns: true if ending as opened (viewing a loop)
@@ -212,12 +213,11 @@ class LoopsView extends Backbone.View
     if @collection.models.length > 0 then @els.portability.addClass('show')
     else @els.portability.removeClass('show')
 
-    # update height of container FIXME
     height = @els.loops.length * @els.loops.height()
     if window.mobile is true and height >= 370
       @els.container.css
-        height:       height + 130 # buffer for bottom buttons
-        'max-height': height + 130
+        height:       height + 75
+        'max-height': height + 75
 
   # called on loading the page if the session.view value is 'loopView'
   # when called from LoopView with a model, view that Loop

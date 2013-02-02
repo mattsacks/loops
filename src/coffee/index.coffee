@@ -56,7 +56,7 @@ $ -> # document.ready
   # window.session = new Session(data.session)
   window.browser  = new Browser()
   # cache original height before render
-  window.ogHeight   = window.innerHeight
+  window.ogHeight = window.innerHeight
   window.platform = browser.Platform.name
   window.mobile =
     if platform is 'ios' or platform is 'android' then true

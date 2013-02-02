@@ -220,6 +220,10 @@ class LoopView extends Backbone.View
       amount: @element.find('#amount')
       currents: @element.find('.current')
 
+    loopsView.els.container.css
+      height:       window.ogHeight
+      'max-height': window.ogHeight
+
   # tell the loopsView to render this view with this model
   restore: (@model, @expandedDetail) -> @trigger('restore', @model)
 
