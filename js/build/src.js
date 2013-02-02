@@ -561,9 +561,13 @@ LoopView = (function(_super) {
   };
 
   LoopView.prototype.postRender = function() {
-    return _.extend(this.els, {
+    _.extend(this.els, {
       amount: this.element.find('#amount'),
       currents: this.element.find('.current')
+    });
+    return loopsView.els.container.css({
+      height: window.ogHeight,
+      'max-height': window.ogHeight
     });
   };
 
@@ -1106,7 +1110,8 @@ LoopsView = (function(_super) {
     } else {
       this.subView.menuClass = '';
       $(document.body).attr('class', 'show');
-      return this.trigger('render', this);
+      this.trigger('render', this);
+      return this.postRender();
     }
   };
 
@@ -1190,8 +1195,8 @@ LoopsView = (function(_super) {
     height = this.els.loops.length * this.els.loops.height();
     if (window.mobile === true && height >= 370) {
       return this.els.container.css({
-        height: height + 130,
-        'max-height': height + 130
+        height: height + 75,
+        'max-height': height + 75
       });
     }
   };
