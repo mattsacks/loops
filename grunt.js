@@ -3,11 +3,11 @@ module.exports = function(grunt) {
     concat: {
       deps: {
         src: ['js/lib/zepto.min.js', 'js/lib/underscore-min.js', 'js/lib/backbone-min.js', 'js/lib/backbone-localstorage.js','js/lib/moment.min.js', 'js/lib/mustache.js',  'js/lib/d3.v2.min.js'],
-        dest: 'deps.js'
+        dest: 'js/build/deps.js'
       },
       source: {
         src: ['js/loop.js', 'js/loopView.js', 'js/graph.js', 'js/loopsView.js', 'js/session.js', 'js/music.js', 'js/index.js'],
-        dest: 'src.js'
+        dest: 'js/build/src.js'
       }
     },
     min: {
