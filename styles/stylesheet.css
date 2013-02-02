@@ -366,6 +366,9 @@ body.show {
     padding-bottom: 8px;
   }
 }
+body.viewing .title.column {
+  opacity: 0;
+}
 body.viewing #loops {
   margin-bottom: 0;
 }
@@ -536,10 +539,16 @@ body.menu #loop-menu {
 }
 
 h1.title {
+  -webkit-transition: opacity 0.05s ease-in-out;
+  -moz-transition: opacity 0.05s ease-in-out;
+  -ms-transition: opacity 0.05s ease-in-out;
+  -o-transition: opacity 0.05s ease-in-out;
+  transition: opacity 0.05s ease-in-out;
   color: #cfcfcd;
+  display: block;
   font-family: "HelveticaNeue-UltraLight", "Helvetica Neue", Helvetica, sans-serif;
   font-weight: 100;
-  display: block;
+  opacity: 1;
   text-align: center;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.8);
 }
