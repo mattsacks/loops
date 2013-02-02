@@ -1102,18 +1102,16 @@ LoopsView = (function(_super) {
         $.scroll(0);
       }
     }
-    if (!$(document.body).hasClass('viewing')) {
-      this.slideList(e.target);
+    if (this.slideList(e.target) === true) {
       this.subView.render(null, this.collection.get(e.target.id));
       return setTimeout(function() {
         return $(document.body).attr('class', 'show viewing ' + _this.subView.menuClass);
       }, 1);
     } else {
-      this.setContainer();
-      this.slideList(e.target);
       this.subView.menuClass = '';
       $(document.body).attr('class', 'show');
-      return this.trigger('render', this);
+      this.trigger('render', this);
+      return setTimeout(this.setContainer.bind(this), 10);
     }
   };
 
