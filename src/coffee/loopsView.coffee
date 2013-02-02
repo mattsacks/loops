@@ -119,16 +119,18 @@ class LoopsView extends Backbone.View
       if window.mobile is true then window.scrollTo(0,0)
       else $.scroll(0)
 
-    if @slideList(e.target) is true # viewing an element
+    if !$(document.body).hasClass('viewing') # the loops view
+      @slideList(e.target)
       @subView.render(null, @collection.get(e.target.id))
       setTimeout =>
         $(document.body).attr('class', 'show viewing ' + @subView.menuClass)
       , 1
     else #closing a view
+      @setContainer()
+      @slideList(e.target)
       @subView.menuClass = ''
       $(document.body).attr('class', 'show')
       @trigger('render', this)
-      @postRender()
 
   # open or close the loop list
   # returns: true if ending as opened (viewing a loop)
@@ -212,7 +214,10 @@ class LoopsView extends Backbone.View
     # if there's now more than one loop, show the export option
     if @collection.models.length > 0 then @els.portability.addClass('show')
     else @els.portability.removeClass('show')
+    @setContainer()
 
+  # set a min height on the container to show all the loops
+  setContainer: ->
     height = @els.loops.length * @els.loops.height()
     if window.mobile is true and height >= 370
       @els.container.css
