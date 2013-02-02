@@ -151,16 +151,18 @@ LoopsView = (function(_super) {
         $.scroll(0);
       }
     }
-    if (this.slideList(e.target) === true) {
+    if (!$(document.body).hasClass('viewing')) {
+      this.slideList(e.target);
       this.subView.render(null, this.collection.get(e.target.id));
       return setTimeout(function() {
         return $(document.body).attr('class', 'show viewing ' + _this.subView.menuClass);
       }, 1);
     } else {
+      this.setContainer();
+      this.slideList(e.target);
       this.subView.menuClass = '';
       $(document.body).attr('class', 'show');
-      this.trigger('render', this);
-      return this.postRender();
+      return this.trigger('render', this);
     }
   };
 
@@ -234,13 +236,17 @@ LoopsView = (function(_super) {
   };
 
   LoopsView.prototype.postRender = function() {
-    var height;
     this.els.loops = this.element.find('.loop-item');
     if (this.collection.models.length > 0) {
       this.els.portability.addClass('show');
     } else {
       this.els.portability.removeClass('show');
     }
+    return this.setContainer();
+  };
+
+  LoopsView.prototype.setContainer = function() {
+    var height;
     height = this.els.loops.length * this.els.loops.height();
     if (window.mobile === true && height >= 370) {
       return this.els.container.css({
