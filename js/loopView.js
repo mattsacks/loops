@@ -275,9 +275,13 @@ LoopView = (function(_super) {
   };
 
   LoopView.prototype.postRender = function() {
-    return _.extend(this.els, {
+    _.extend(this.els, {
       amount: this.element.find('#amount'),
       currents: this.element.find('.current')
+    });
+    return loopsView.els.container.css({
+      height: window.ogHeight,
+      'max-height': window.ogHeight
     });
   };
 

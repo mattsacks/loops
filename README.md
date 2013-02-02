@@ -42,7 +42,7 @@ the script tag in `index.haml` and live compile the source as you change it.
 
 To fire up a server, on OS X you can execute the common `python -m
 SimpleHTTPServer` in the terminal located at this directory. Find your IP
-address with `ifconfig` and then just go to `192.168.1.xxx:8000` or whatever the
+address with `ifconfig` and then just go to `localhost:8000` or whatever the
 IP:port is on your iOS device (or browser).
 
 ## FAQ

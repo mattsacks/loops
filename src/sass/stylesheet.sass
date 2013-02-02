@@ -42,6 +42,9 @@ body
       +respond-to(desktop)
         padding-bottom: 8px
 
+    .title.column
+      opacity: 0
+
     #loops
       margin-bottom: 0
 
@@ -145,10 +148,12 @@ body
 
 // loops title
 h1.title
+  +transition(opacity 0.05s ease-in-out)
   color: #CFCFCD
+  display: block
   font-family: "HelveticaNeue-UltraLight", "Helvetica Neue", Helvetica, sans-serif
   font-weight: 100
-  display: block
+  opacity: 1
   text-align: center
   text-shadow: 1px 1px 0px rgba(0,0,0,0.8)
 
