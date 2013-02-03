@@ -128,7 +128,7 @@ class LoopsView extends Backbone.View
       @subView.menuClass = ''
       $(document.body).attr('class', 'show')
       @trigger('render', this)
-      setTimeout @setContainer.bind(this), 10
+      setTimeout @setContainer.bind(this), 125
 
   # open or close the loop list
   # returns: true if ending as opened (viewing a loop)
