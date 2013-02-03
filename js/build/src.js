@@ -1111,7 +1111,7 @@ LoopsView = (function(_super) {
       this.subView.menuClass = '';
       $(document.body).attr('class', 'show');
       this.trigger('render', this);
-      return setTimeout(this.setContainer.bind(this), 10);
+      return setTimeout(this.setContainer.bind(this), 125);
     }
   };
 
